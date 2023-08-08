@@ -26,6 +26,7 @@ const routes: Routes = [
     path: 'level',
     component: LevelComponent,
   },
+  { path: '**', component: HomeComponent },
 ];
 
 @NgModule({
