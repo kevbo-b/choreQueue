@@ -2,4 +2,8 @@
 
 <button (click)="redirect('/edit/new')">Add new Task</button>
 
-<!-- entries here -->
+<div *ngFor="let task of tasks">
+  {{ task.id }}
+  {{ task.title }}
+  <button (click)="redirect('/edit/' + task.id)"></button>
+</div>
