@@ -32,12 +32,14 @@
 }
 .task-container:hover {
   background-position: 700px;
-  cursor: pointer;
 }
 .task {
   flex: 1;
   min-width: 0; /* or some value */
   max-height: 60px;
+}
+.task:hover {
+  cursor: pointer;
 }
 
 .task-title-text {
@@ -54,4 +56,11 @@
 .task-last-post {
   padding-left: 5px;
   padding-right: 5px;
+}
+.task-delete-btn {
+  text-align: center;
+  cursor: pointer;
+}
+.task-delete-btn:hover {
+  background-color: rgb(255, 255, 159);
 }

@@ -23,4 +23,13 @@ export class EditListComponent implements OnInit {
   redirect(path: string): void {
     this.router.navigate([path]);
   }
+
+  deleteTask(task: ITask): void {
+    if (
+      confirm(`Are you sure you want to delete "${task.title}" permanently?`) ==
+      true
+    ) {
+      this.saveService.deleteTask(task);
+    }
+  }
 }

@@ -52,6 +52,17 @@ export class SaveService {
     this._setData();
   }
 
+  public deleteTask(task: ITask): void {
+    let taskToEdit = this.getTaskById(task.id);
+    if (taskToEdit) {
+      let index = this.allTasks.indexOf(taskToEdit, 0);
+      if (index > -1) {
+        this.allTasks.splice(index, 1);
+      }
+    }
+    this._setData();
+  }
+
   public getAllTasks(): ITask[] {
     this._getData();
     return this.allTasks;
