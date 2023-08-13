@@ -2,8 +2,17 @@
 
 <button (click)="redirect('/edit/new')">Add new Task</button>
 
-<div *ngFor="let task of tasks">
-  {{ task.id }}
-  {{ task.title }}
-  <button (click)="redirect('/edit/' + task.id)"></button>
+<div class="tasksArea">
+  <div
+    class="task-container"
+    *ngFor="let task of tasks"
+    (click)="redirect('/edit/' + task.id)"
+  >
+    <div class="task">
+      <div class="task-title-text" [innerHTML]="task.title"></div>
+      <div class="task-last-post">
+        Next due: {{ task.nextDueDate | date : "dd.MM.yyyy" }}
+      </div>
+    </div>
+  </div>
 </div>
