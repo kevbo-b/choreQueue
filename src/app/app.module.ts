@@ -9,6 +9,7 @@ import { LevelComponent } from './level/level.component';
 import { EditListComponent } from './edit-list/edit-list.component';
 import { EditorComponent } from './editor/editor.component';
 import { FormsModule } from '@angular/forms';
+import { SaveService } from './services/save.service';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,7 @@ import { FormsModule } from '@angular/forms';
     EditorComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
-  providers: [],
+  providers: [SaveService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

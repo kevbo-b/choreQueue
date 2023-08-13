@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ITask } from '../models/task';
 import { ActivatedRoute, Router } from '@angular/router';
+import { v4 as uuid } from 'uuid';
+import { SaveService } from '../services/save.service';
 
 @Component({
   selector: 'app-editor',
@@ -10,12 +12,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class EditorComponent implements OnInit {
   public constructor(
     public readonly router: Router,
-    public readonly activeRoute: ActivatedRoute
+    public readonly activeRoute: ActivatedRoute,
+    public readonly saveService: SaveService
   ) {}
 
   createNew = false;
   taskId = '';
   public task: ITask = {
+    id: '',
     title: '',
     description: '',
     nextDueDate: '',
@@ -27,9 +31,14 @@ export class EditorComponent implements OnInit {
     this.activeRoute.params.subscribe((params: Record<string, string>) => {
       if ('id' in params) {
         this.taskId = params['id'];
-
         if (this.taskId && this.taskId !== 'new') {
-          //TODO: get task from id (with service)
+          let task = this.saveService.getTaskById(this.taskId);
+          if (task) {
+            this.task = task;
+          } else {
+            alert(`Task with the ID ${this.taskId} not found`);
+            this.createNew = true;
+          }
         } else {
           this.createNew = true;
         }
@@ -38,7 +47,6 @@ export class EditorComponent implements OnInit {
   }
 
   onSavePressed(): void {
-    console.log(this.task);
     //validation
     if (
       this.task.title === '' ||
@@ -50,10 +58,12 @@ export class EditorComponent implements OnInit {
       );
     } else {
       //if inputs are ok...
-      //TODO: save (with service)
       if (this.createNew) {
+        this.task.id = uuid();
+        this.saveService.addNewTask(this.task);
         alert('Task Created!');
       } else {
+        this.saveService.editTask(this.task);
         alert('Task Edited!');
       }
     }
