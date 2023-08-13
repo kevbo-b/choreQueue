@@ -8,6 +8,7 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { LevelComponent } from './level/level.component';
 import { EditListComponent } from './edit-list/edit-list.component';
 import { EditorComponent } from './editor/editor.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,13 +17,10 @@ import { EditorComponent } from './editor/editor.component';
     NavigationComponent,
     LevelComponent,
     EditListComponent,
-    EditorComponent
+    EditorComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
+  imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

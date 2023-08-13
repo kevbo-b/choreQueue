@@ -1,1 +1,22 @@
-<p>editor works!</p>
+<div><button (click)="onBackPressed()">Back</button></div>
+
+<h1 *ngIf="createNew">Create New Task</h1>
+<h1 *ngIf="!createNew">Edit Task</h1>
+
+<h4>Title</h4>
+<input [(ngModel)]="task.title" />
+
+<h4>Description</h4>
+<input [(ngModel)]="task.description" />
+
+<h4 *ngIf="createNew">First due date</h4>
+<h4 *ngIf="!createNew">Next due date</h4>
+<input type="date" [(ngModel)]="task.nextDueDate" />
+
+<h4>Interval in days (=When to repeat after finishing)</h4>
+<input [(ngModel)]="task.intervalInDays" type="number" />
+
+<h4>XP Reward</h4>
+<input [(ngModel)]="task.xp" type="number" />
+
+<button (click)="onSavePressed()">Save</button>
