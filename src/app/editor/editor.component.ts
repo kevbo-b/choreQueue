@@ -61,6 +61,7 @@ export class EditorComponent implements OnInit {
       if (this.createNew) {
         this.task.id = uuid();
         this.saveService.addNewTask(this.task);
+        this.createNew = false;
         alert('Task Created!');
       } else {
         this.saveService.editTask(this.task);
