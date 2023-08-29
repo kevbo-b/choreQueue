@@ -27,11 +27,22 @@ export class TimelineComponent implements OnInit {
     this.buildTimelineData();
   }
 
-  public isDueTodayOrEarlier(dateStr: string): boolean {
+  public isDue(dateStr: string): boolean {
     var inputDate = new Date(dateStr);
     var todaysDate = new Date();
     if (inputDate.setHours(0, 0, 0, 0) <= todaysDate.setHours(0, 0, 0, 0)) {
       return true;
+    }
+    return false;
+  }
+
+  public existsAtLeastOneDueTask() {
+    for (let day of this.days) {
+      for (let task of day.tasks) {
+        if (this.isDue(task.nextDueDate)) {
+          return true;
+        }
+      }
     }
     return false;
   }

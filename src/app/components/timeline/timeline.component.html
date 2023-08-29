@@ -1,10 +1,26 @@
-<div class="day-container" *ngFor="let day of days">
-  <div [ngClass]="isDueTodayOrEarlier(day.date) ? 'dueDay' : 'notDueYet'">
-    <h2>{{ day.date }}</h2>
+<h2>Tasks</h2>
+
+<div *ngIf="existsAtLeastOneDueTask()">
+  <div class="day-container" *ngFor="let day of days">
+    <div *ngIf="isDue(day.date)" class="dueDay">
+      <div class="task-container" *ngFor="let task of day.tasks">
+        <button (click)="skipTask(task)">Skip</button>
+        {{ task.title }}
+        due: {{ task.nextDueDate }}
+        <button (click)="completeTask(task)">Complete</button>
+      </div>
+    </div>
   </div>
-  <div class="task-container" *ngFor="let task of day.tasks">
-    <button (click)="skipTask(task)">Skip</button>
-    {{ task.title }}
-    <button (click)="completeTask(task)">Complete</button>
+</div>
+<div *ngIf="!existsAtLeastOneDueTask()">No due Tasks yet.</div>
+
+<div class="day-container" *ngFor="let day of days">
+  <div *ngIf="!isDue(day.date)" class="notDueYet">
+    <h2>{{ day.date }}</h2>
+    <div class="task-container" *ngFor="let task of day.tasks">
+      <button (click)="skipTask(task)">Skip</button>
+      {{ task.title }}
+      <button (click)="completeTask(task)">Complete</button>
+    </div>
   </div>
 </div>
