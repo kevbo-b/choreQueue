@@ -1,7 +1,10 @@
-<p>timeline works!</p>
-
-<div class="task-container" *ngFor="let task of tasks">
-  {{ task.title }}
-  <button (click)="skipTask(task)">Skip</button>
-  <button (click)="completeTask(task)">Complete</button>
+<div class="day-container" *ngFor="let day of days">
+  <div [ngClass]="isDueTodayOrEarlier(day.date) ? 'dueDay' : 'notDueYet'">
+    <h2>{{ day.date }}</h2>
+  </div>
+  <div class="task-container" *ngFor="let task of day.tasks">
+    <button (click)="skipTask(task)">Skip</button>
+    {{ task.title }}
+    <button (click)="completeTask(task)">Complete</button>
+  </div>
 </div>

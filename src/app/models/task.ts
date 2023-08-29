@@ -6,3 +6,8 @@ export interface ITask {
   intervalInDays: number;
   xp: number;
 }
+
+export interface IDay {
+  date: string;
+  tasks: ITask[];
+}
