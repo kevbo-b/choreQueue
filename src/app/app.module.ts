@@ -10,6 +10,7 @@ import { EditListComponent } from './edit-list/edit-list.component';
 import { EditorComponent } from './editor/editor.component';
 import { FormsModule } from '@angular/forms';
 import { SaveService } from './services/save.service';
+import { TimelineComponent } from './components/timeline/timeline.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { SaveService } from './services/save.service';
     LevelComponent,
     EditListComponent,
     EditorComponent,
+    TimelineComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [SaveService],

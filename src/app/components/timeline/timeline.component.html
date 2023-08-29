@@ -1,0 +1,7 @@
+<p>timeline works!</p>
+
+<div class="task-container" *ngFor="let task of tasks">
+  {{ task.title }}
+  <button (click)="skipTask(task)">Skip</button>
+  <button (click)="completeTask(task)">Complete</button>
+</div>
