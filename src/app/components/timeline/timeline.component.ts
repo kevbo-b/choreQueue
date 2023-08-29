@@ -18,10 +18,10 @@ export class TimelineComponent implements OnInit {
   }
 
   skipTask(task: ITask) {
-    console.log('skipping', task);
+    this.saveService.completeTask(task, false);
   }
 
   completeTask(task: ITask) {
-    console.log('completing', task);
+    this.saveService.completeTask(task);
   }
 }

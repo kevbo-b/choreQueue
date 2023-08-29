@@ -67,4 +67,22 @@ export class SaveService {
     this._getData();
     return this.allTasks;
   }
+
+  public completeTask(inputtedTask: ITask, gainXP: boolean = true): void {
+    var task = this.getTaskById(inputtedTask.id);
+    if (task) {
+      //today + days till task should return
+      var date = new Date();
+      date.setDate(date.getDate() + task.intervalInDays);
+      var getYear = date.toLocaleString('default', { year: 'numeric' });
+      var getMonth = date.toLocaleString('default', { month: '2-digit' });
+      var getDay = date.toLocaleString('default', { day: '2-digit' });
+      task.nextDueDate = getYear + '-' + getMonth + '-' + getDay;
+      if (gainXP) {
+        //TODO: add XP of task to level
+      }
+
+      this._setData();
+    }
+  }
 }
