@@ -3,8 +3,19 @@ export interface ITask {
   title: string;
   description: string;
   nextDueDate: string;
-  intervalInDays: number;
+  interval: {
+    method: IntervalMethod;
+    num: number;
+  };
+  addToLastDueDate: boolean;
   xp: number;
+}
+
+export enum IntervalMethod {
+  Day,
+  Month,
+  Year,
+  NeverRepeat,
 }
 
 export interface IDay {

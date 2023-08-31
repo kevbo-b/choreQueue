@@ -13,8 +13,30 @@
 <h4 *ngIf="!createNew">Next due date</h4>
 <input type="date" [(ngModel)]="task.nextDueDate" />
 
-<h4>Interval in days (=When to repeat after finishing)</h4>
-<input [(ngModel)]="task.intervalInDays" type="number" />
+<h4>Interval (=When to repeat after finishing)</h4>
+<input [(ngModel)]="task.interval.num" type="number" />
+<select
+  [(ngModel)]="task.interval.method"
+  (ngModelChange)="onIntervalMethodChange()"
+>
+  <option [value]="intervalMethod.Day">Days</option>
+  <option [value]="intervalMethod.Month">Months</option>
+  <option [value]="intervalMethod.Year">Years</option>
+  <option [value]="intervalMethod.NeverRepeat">
+    Never Repeat (will be deleted after completion)
+  </option>
+</select>
+
+<div>
+  <input
+    [disabled]="task.interval.method == intervalMethod.NeverRepeat"
+    type="checkbox"
+    [(ngModel)]="task.addToLastDueDate"
+  />
+  <label [ariaDisabled]=""
+    >Add interval to Last Due Date (if not, add to Completion Date)</label
+  >
+</div>
 
 <h4>XP Reward</h4>
 <input [(ngModel)]="task.xp" type="number" />

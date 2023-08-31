@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ITask } from '../models/task';
+import { ITask, IntervalMethod } from '../models/task';
 import { ActivatedRoute, Router } from '@angular/router';
 import { v4 as uuid } from 'uuid';
 import { SaveService } from '../services/save.service';
@@ -23,9 +23,14 @@ export class EditorComponent implements OnInit {
     title: '',
     description: '',
     nextDueDate: '',
-    intervalInDays: 7,
+    interval: {
+      method: IntervalMethod.Day,
+      num: 7,
+    },
+    addToLastDueDate: false,
     xp: 100,
   };
+  public intervalMethod = IntervalMethod;
 
   ngOnInit(): void {
     this.activeRoute.params.subscribe((params: Record<string, string>) => {
@@ -46,12 +51,18 @@ export class EditorComponent implements OnInit {
     });
   }
 
+  onIntervalMethodChange(): void {
+    if (this.task.interval.method == this.intervalMethod.NeverRepeat) {
+      this.task.addToLastDueDate = false;
+    }
+  }
+
   onSavePressed(): void {
     //validation
     if (
       this.task.title === '' ||
       this.task.nextDueDate === '' ||
-      this.task.intervalInDays < 1
+      this.task.interval.num < 1
     ) {
       alert(
         'Error: Not saved! Wrong inputs in title, nextDueDate, or intervalInDays.'

@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
-import { ITask } from '../models/task';
+import { ITask, IntervalMethod } from '../models/task';
 
 @Injectable({
   providedIn: 'root',
@@ -46,7 +46,7 @@ export class SaveService {
       taskToEdit.title = task.title;
       taskToEdit.description = task.description;
       taskToEdit.nextDueDate = task.nextDueDate;
-      taskToEdit.intervalInDays = task.intervalInDays;
+      taskToEdit.interval = task.interval;
       taskToEdit.xp = task.xp;
     }
     this._setData();
@@ -71,18 +71,41 @@ export class SaveService {
   public completeTask(inputtedTask: ITask, gainXP: boolean = true): void {
     var task = this.getTaskById(inputtedTask.id);
     if (task) {
-      //today + days till task should return
-      var date = new Date();
-      date.setDate(date.getDate() + task.intervalInDays);
-      var getYear = date.toLocaleString('default', { year: 'numeric' });
-      var getMonth = date.toLocaleString('default', { month: '2-digit' });
-      var getDay = date.toLocaleString('default', { day: '2-digit' });
-      task.nextDueDate = getYear + '-' + getMonth + '-' + getDay;
       if (gainXP) {
         //TODO: add XP of task to level
       }
-
+      if (task.interval.method === IntervalMethod.NeverRepeat) {
+        this.deleteTask(task);
+        return;
+      }
+      task.nextDueDate = this.setNextDueDate(task);
       this._setData();
     }
+  }
+
+  private setNextDueDate(task: ITask): string {
+    var baseDate = new Date(); //begin today
+    if (task.addToLastDueDate) {
+      baseDate = new Date(task.nextDueDate); //begin on last supposed due Date
+    }
+    var newDate = new Date(baseDate);
+    //Add interval
+    if (task.interval.method == IntervalMethod.Day) {
+      newDate.setDate(newDate.getDate() + task.interval.num);
+    } else if (task.interval.method == IntervalMethod.Month) {
+      newDate = new Date(
+        newDate.setMonth(newDate.getMonth() + task.interval.num)
+      );
+    } else if (task.interval.method == IntervalMethod.Year) {
+      newDate = new Date(
+        baseDate.setFullYear(baseDate.getFullYear() + task.interval.num)
+      );
+    }
+
+    var getYear = newDate.toLocaleString('default', { year: 'numeric' });
+    var getMonth = newDate.toLocaleString('default', { month: '2-digit' });
+    var getDay = newDate.toLocaleString('default', { day: '2-digit' });
+
+    return getYear + '-' + getMonth + '-' + getDay;
   }
 }
