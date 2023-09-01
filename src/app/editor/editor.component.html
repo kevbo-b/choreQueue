@@ -7,7 +7,7 @@
 <input [(ngModel)]="task.title" />
 
 <h4>Description</h4>
-<input [(ngModel)]="task.description" />
+<textarea [(ngModel)]="task.description" rows="30" cols="120"> </textarea>
 
 <h4 *ngIf="createNew">First due date</h4>
 <h4 *ngIf="!createNew">Next due date</h4>

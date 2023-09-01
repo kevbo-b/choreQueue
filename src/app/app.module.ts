@@ -11,6 +11,7 @@ import { EditorComponent } from './editor/editor.component';
 import { FormsModule } from '@angular/forms';
 import { SaveService } from './services/save.service';
 import { TimelineComponent } from './components/timeline/timeline.component';
+import { TaskPanelComponent } from './components/task-panel/task-panel.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { TimelineComponent } from './components/timeline/timeline.component';
     EditListComponent,
     EditorComponent,
     TimelineComponent,
+    TaskPanelComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [SaveService],

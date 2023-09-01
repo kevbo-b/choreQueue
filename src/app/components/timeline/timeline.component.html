@@ -4,10 +4,12 @@
   <div class="day-container" *ngFor="let day of days">
     <div *ngIf="isDue(day.date)" class="dueDay">
       <div class="task-container" *ngFor="let task of day.tasks">
-        <button (click)="skipTask(task)">Skip</button>
-        {{ task.title }}
-        due: {{ task.nextDueDate }}
-        <button (click)="completeTask(task)">Complete</button>
+        <app-task-panel
+          [task]="task"
+          (taskSkipped)="skipTask(task)"
+          (taskCompleted)="completeTask(task)"
+          (taskDeleted)="deleteTask(task)"
+        ></app-task-panel>
       </div>
     </div>
   </div>
@@ -16,11 +18,14 @@
 
 <div class="day-container" *ngFor="let day of days">
   <div *ngIf="!isDue(day.date)" class="notDueYet">
-    <h2>{{ day.date }}</h2>
+    <h2>{{ day.date | date }}</h2>
     <div class="task-container" *ngFor="let task of day.tasks">
-      <button (click)="skipTask(task)">Skip</button>
-      {{ task.title }}
-      <button (click)="completeTask(task)">Complete</button>
+      <app-task-panel
+        [task]="task"
+        (taskSkipped)="skipTask(task)"
+        (taskCompleted)="completeTask(task)"
+        (taskDeleted)="deleteTask(task)"
+      ></app-task-panel>
     </div>
   </div>
 </div>

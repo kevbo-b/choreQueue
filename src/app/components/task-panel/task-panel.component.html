@@ -1,0 +1,18 @@
+<div *ngIf="task" class="task-panel">
+  <div class="task-content">
+    <div
+      class="task-title-text"
+      [innerHTML]="task.title"
+      (click)="showDetails = !showDetails"
+    ></div>
+    <div *ngIf="showDetails" class="task-options">
+      <div class="task-description" [innerHTML]="task.description"></div>
+      <div>
+        <button (click)="router.navigate(['/edit/' + task.id])">edit</button>
+        <button (click)="deletePrompt()">delete</button>
+      </div>
+    </div>
+  </div>
+  <div class="task-skip" (click)="taskSkipped.emit()">skip</div>
+  <div class="task-complete" (click)="taskCompleted.emit()">Complete</div>
+</div>

@@ -1,0 +1,60 @@
+.task-panel {
+  border-style: solid;
+  border-width: 2px;
+  border-color: aqua;
+  display: grid;
+  grid-template-columns: 70% 15% 155%;
+  grid-template-areas: "task-content task-skip task-complete";
+}
+
+.task-content {
+  grid-area: "task-content";
+  min-width: 5em;
+}
+
+.task-options {
+  grid-area: "task-options";
+  min-width: 5em;
+  border-style: none none none solid;
+  border-width: 1px;
+  border-color: black;
+}
+
+.task-skip {
+  grid-area: "task-skip";
+  min-width: 5em;
+  border-style: none none none solid;
+  border-width: 1px;
+  border-color: black;
+}
+
+.task-complete {
+  grid-area: "task-complete";
+  background-color: green;
+  min-width: 5em;
+  border-style: none none none solid;
+  border-width: 1px;
+  border-color: black;
+}
+
+.task-description {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  white-space: pre-wrap;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.task-title-text:hover {
+  background-color: yellow;
+  cursor: pointer;
+}
+
+.task-skip:hover {
+  background-color: yellow;
+  cursor: pointer;
+}
+
+.task-complete:hover {
+  background-color: #aaffaa;
+  cursor: pointer;
+}

@@ -27,6 +27,11 @@ export class TimelineComponent implements OnInit {
     this.buildTimelineData();
   }
 
+  deleteTask(task: ITask) {
+    this.saveService.deleteTask(task);
+    this.buildTimelineData();
+  }
+
   public isDue(dateStr: string): boolean {
     var inputDate = new Date(dateStr);
     var todaysDate = new Date();
