@@ -7,6 +7,9 @@
     ></div>
     <div *ngIf="showDetails" class="task-options">
       <div class="task-description" [innerHTML]="task.description"></div>
+      <span *ngIf="task.description.length == 0" class="task-description-empty"
+        >No Description.</span
+      >
       <div>
         <button (click)="router.navigate(['/edit/' + task.id])">edit</button>
         <button (click)="deletePrompt()">delete</button>

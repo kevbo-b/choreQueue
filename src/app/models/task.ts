@@ -22,3 +22,8 @@ export interface IDay {
   date: string;
   tasks: ITask[];
 }
+
+export interface ILevelProgress {
+  level: number;
+  xp: number;
+}
