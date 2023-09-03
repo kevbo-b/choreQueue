@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { SaveService } from './services/save.service';
 import { TimelineComponent } from './components/timeline/timeline.component';
 import { TaskPanelComponent } from './components/task-panel/task-panel.component';
+import { XpProgressBarComponent } from './components/xp-progress-bar/xp-progress-bar.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { TaskPanelComponent } from './components/task-panel/task-panel.component
     EditorComponent,
     TimelineComponent,
     TaskPanelComponent,
+    XpProgressBarComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [SaveService],

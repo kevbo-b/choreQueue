@@ -27,3 +27,8 @@ export interface ILevelProgress {
   level: number;
   xp: number;
 }
+
+export interface IXpChangeMessage {
+  progressPercentage: number;
+  isNewLevel: boolean;
+}

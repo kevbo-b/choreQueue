@@ -1,5 +1,11 @@
 import { Injectable, OnInit } from '@angular/core';
-import { ILevelProgress, ITask, IntervalMethod } from '../models/task';
+import {
+  ILevelProgress,
+  ITask,
+  IXpChangeMessage,
+  IntervalMethod,
+} from '../models/task';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +21,8 @@ export class SaveService {
     xp: 0,
   };
   private levelProgressKey = 'levelProgress';
+
+  private levelSubject = new Subject<IXpChangeMessage>();
 
   private _getData() {
     //tasks
@@ -129,6 +137,7 @@ export class SaveService {
 
   //leveling
   public getLevelProgress(): ILevelProgress {
+    this._getData();
     return this.levelProgress;
   }
 
@@ -139,7 +148,7 @@ export class SaveService {
    * Levels up if there is enough XP.
    * Returns if Player has leveled up
    */
-  public addXP(xp: number): boolean {
+  private addXP(xp: number): boolean {
     this.levelProgress.xp = this.levelProgress.xp + xp;
     //levelUp
     var isLevelingUp = false;
@@ -150,7 +159,7 @@ export class SaveService {
       isLevelingUp = true;
     }
     this._setData();
-    console.log(this.levelProgress, isLevelingUp, xpNeeded);
+    this._emitLevelingProgress(isLevelingUp);
     return isLevelingUp;
   }
 
@@ -164,5 +173,27 @@ export class SaveService {
     currentLevelXp = Math.ceil(currentLevelXp / roundToNext) * roundToNext;
 
     return Math.min(currentLevelXp, maxForLevel);
+  }
+
+  public getXPOfLevel(level: number): number {
+    this._getData();
+    return this.getLevelXP(level);
+  }
+
+  public getLevelSubject(): Subject<IXpChangeMessage> {
+    return this.levelSubject;
+  }
+
+  private _emitLevelingProgress(levelingUp: boolean): void {
+    this.levelSubject.next({
+      progressPercentage: this.getCurrentLevelProgressPercentage(),
+      isNewLevel: levelingUp,
+    });
+  }
+
+  public getCurrentLevelProgressPercentage(): number {
+    const xpNeeded = this.getLevelXP(this.levelProgress.level);
+    const progressPercent = (100 / xpNeeded) * this.levelProgress.xp;
+    return progressPercent;
   }
 }
