@@ -16,6 +16,7 @@ export interface ICategory {
   id: string;
   name: string;
   color: string;
+  priorityPlace: number;
 }
 
 export enum IntervalMethod {

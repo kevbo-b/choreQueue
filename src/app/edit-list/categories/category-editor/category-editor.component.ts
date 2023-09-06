@@ -22,6 +22,7 @@ export class CategoryEditorComponent {
     id: '',
     color: '',
     name: '',
+    priorityPlace: -1,
   };
 
   ngOnInit(): void {

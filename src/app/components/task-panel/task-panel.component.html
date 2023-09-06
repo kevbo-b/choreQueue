@@ -1,4 +1,11 @@
-<div *ngIf="task" class="task-panel">
+<div
+  *ngIf="task"
+  class="task-panel"
+  [ngStyle]="{
+    background:
+      '-webkit-linear-gradient(' + getCategoryColor(task) + ', #ffffff)'
+  }"
+>
   <div class="task-content">
     <div
       class="task-title-text"

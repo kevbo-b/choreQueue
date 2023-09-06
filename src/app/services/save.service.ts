@@ -28,6 +28,7 @@ export class SaveService {
     id: 'default',
     name: 'Default',
     color: '4444BB',
+    priorityPlace: 0,
   };
   private categoriesKey = 'taskCategories';
 
@@ -236,6 +237,11 @@ export class SaveService {
     let categoryToDelete = this.getCategoryById(category.id);
     if (categoryToDelete) {
       let index = this.categories.indexOf(categoryToDelete, 0);
+      //set Priority of all following indexes lower
+      for (let i = index; i < this.categories.length; i++) {
+        this.categories[i].priorityPlace--;
+      }
+      //delete
       if (index > -1) {
         this.categories.splice(index, 1);
       }
@@ -244,8 +250,50 @@ export class SaveService {
   }
 
   public addNewCategory(category: ICategory): void {
+    category.priorityPlace = this.categories.length;
     this.categories.push(category);
     this._setData();
+  }
+
+  public demoteCategoryPriority(category: ICategory): void {
+    let categoryToPromote = this.getCategoryById(category.id);
+    if (categoryToPromote) {
+      if (categoryToPromote.priorityPlace < this.categories.length) {
+        let categoryToDemote = this.findCategoryByPriority(
+          categoryToPromote.priorityPlace + 1
+        );
+        if (categoryToDemote) {
+          categoryToPromote.priorityPlace = categoryToDemote.priorityPlace;
+          categoryToDemote.priorityPlace = categoryToDemote.priorityPlace - 1;
+        }
+      }
+    }
+    this._setData();
+  }
+
+  public promoteCategoryPriority(category: ICategory): void {
+    let categoryToDemote = this.getCategoryById(category.id);
+    if (categoryToDemote) {
+      if (categoryToDemote.priorityPlace > 0) {
+        let categoryToPromote = this.findCategoryByPriority(
+          categoryToDemote.priorityPlace - 1
+        );
+        if (categoryToPromote) {
+          categoryToDemote.priorityPlace = categoryToPromote.priorityPlace;
+          categoryToPromote.priorityPlace = categoryToPromote.priorityPlace + 1;
+        }
+      }
+    }
+    this._setData();
+  }
+
+  private findCategoryByPriority(priority: number): ICategory | undefined {
+    for (let category of this.categories) {
+      if (category.priorityPlace == priority) {
+        return category;
+      }
+    }
+    return undefined;
   }
 
   public editCategory(category: ICategory): void {

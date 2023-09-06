@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { ITask } from 'src/app/models/task';
+import { ICategory, ITask } from 'src/app/models/task';
 
 @Component({
   selector: 'app-task-panel',
@@ -10,6 +10,7 @@ import { ITask } from 'src/app/models/task';
 export class TaskPanelComponent {
   @Input() public task: ITask | undefined;
   @Input() public due: boolean = true;
+  @Input() public categories: ICategory[] = [];
   @Output() public taskSkipped = new EventEmitter();
   @Output() public taskCompleted = new EventEmitter();
   @Output() public taskDeleted = new EventEmitter();
@@ -33,5 +34,14 @@ export class TaskPanelComponent {
     this.router.navigate(['/edit/' + taskId], {
       queryParams: { redirectedFrom: 'home' },
     });
+  }
+
+  getCategoryColor(taskId: ITask): string {
+    for (let category of this.categories) {
+      if (category.id == taskId.categoryId) {
+        return category.color;
+      }
+    }
+    return '#4444bb';
   }
 }

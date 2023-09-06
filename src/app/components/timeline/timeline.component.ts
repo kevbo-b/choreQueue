@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IDay, ITask } from 'src/app/models/task';
+import { ICategory, IDay, ITask } from 'src/app/models/task';
 import { SaveService } from 'src/app/services/save.service';
 
 @Component({
@@ -10,6 +10,7 @@ import { SaveService } from 'src/app/services/save.service';
 export class TimelineComponent implements OnInit {
   private _tasks: ITask[] = [];
   public days: IDay[] = [];
+  public categories: ICategory[] = [];
 
   public constructor(public readonly saveService: SaveService) {}
 
@@ -54,6 +55,7 @@ export class TimelineComponent implements OnInit {
 
   private buildTimelineData() {
     this._tasks = this.saveService.getAllTasks();
+    this.categories = this.saveService.getAllCategories();
     this.sortByDueDate();
   }
 
@@ -63,12 +65,9 @@ export class TimelineComponent implements OnInit {
     for (let task of this._tasks) {
       let addNew = true;
       for (let day of this.days) {
-        //Add Task to existing day (& sort by title)
+        //Add Task to existing day
         if (day.date === task.nextDueDate) {
           day.tasks.push(task);
-          day.tasks.sort((a: ITask, b: ITask) => {
-            return Date.parse(a.nextDueDate) - Date.parse(b.nextDueDate);
-          });
           addNew = false;
           break;
         }
@@ -86,5 +85,21 @@ export class TimelineComponent implements OnInit {
     this.days.sort((a: IDay, b: IDay) => {
       return Date.parse(a.date) - Date.parse(b.date);
     });
+
+    //Sort Tasks by Categories within days
+    for (let day of this.days) {
+      day.tasks.sort((a: ITask, b: ITask) => {
+        let priorityA = this.saveService.getCategoryById(a.categoryId)
+          ?.priorityPlace as number;
+        let priorityB = this.saveService.getCategoryById(b.categoryId)
+          ?.priorityPlace as number;
+
+        if (priorityA > priorityB) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+    }
   }
 }

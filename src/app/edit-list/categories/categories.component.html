@@ -3,13 +3,36 @@
 <button (click)="redirect('/categories/edit/new')">Add new Category</button>
 
 <div class="tasksArea">
-  <div class="task-container" *ngFor="let category of categories">
+  <div
+    [ngStyle]="{
+      background: '-webkit-linear-gradient(' + category.color + ', #ffffff)'
+    }"
+    class="task-container"
+    *ngFor="let category of categories; let i = index"
+  >
     <div class="task" (click)="redirect('categories/edit/' + category.id)">
       <div class="task-title-text" [innerHTML]="category.name"></div>
-      <div class="task-last-post">Color: {{ category.color }}</div>
+      <div class="task-last-post">Priority: {{ category.priorityPlace }}</div>
     </div>
     <button class="task-delete-btn" (click)="deleteCategory(category)">
       Delete
     </button>
+    <div>
+      <button
+        [disabled]="i == 0"
+        class="task-delete-btn"
+        (click)="movePriorityUp(category)"
+      >
+        ^
+      </button>
+      <br />
+      <button
+        [disabled]="i == categories.length - 1"
+        class="task-delete-btn"
+        (click)="movePriorityDown(category)"
+      >
+        v
+      </button>
+    </div>
   </div>
 </div>

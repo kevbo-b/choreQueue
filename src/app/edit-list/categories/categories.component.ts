@@ -17,11 +17,28 @@ export class CategoriesComponent {
   categories: ICategory[] = [];
 
   ngOnInit(): void {
+    this.getAndSortCategories();
+  }
+
+  getAndSortCategories(): void {
     this.categories = this.saveService.getAllCategories();
+    this.categories.sort((a: ICategory, b: ICategory) => {
+      return a.priorityPlace - b.priorityPlace;
+    });
   }
 
   redirect(path: string): void {
     this.router.navigate([path]);
+  }
+
+  movePriorityUp(category: ICategory): void {
+    this.saveService.promoteCategoryPriority(category);
+    this.getAndSortCategories();
+  }
+
+  movePriorityDown(category: ICategory): void {
+    this.saveService.demoteCategoryPriority(category);
+    this.getAndSortCategories();
   }
 
   deleteCategory(categoryToDelete: ICategory): void {
@@ -31,10 +48,7 @@ export class CategoriesComponent {
       ) == true
     ) {
       this.saveService.deleteCategory(categoryToDelete);
-      let index = this.categories.indexOf(categoryToDelete, 0);
-      if (index > -1) {
-        this.categories.splice(index, 1);
-      }
+      this.getAndSortCategories();
     }
   }
 }

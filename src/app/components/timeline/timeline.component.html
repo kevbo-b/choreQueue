@@ -6,6 +6,7 @@
       <div class="task-container" *ngFor="let task of day.tasks">
         <app-task-panel
           [task]="task"
+          [categories]="categories"
           (taskSkipped)="skipTask(task)"
           (taskCompleted)="completeTask(task)"
           (taskDeleted)="deleteTask(task)"
@@ -22,6 +23,7 @@
     <div class="task-container" *ngFor="let task of day.tasks">
       <app-task-panel
         [task]="task"
+        [categories]="categories"
         (taskSkipped)="skipTask(task)"
         (taskCompleted)="completeTask(task)"
         (taskDeleted)="deleteTask(task)"
