@@ -56,7 +56,6 @@ export class EditorComponent implements OnInit {
     });
 
     this.activeRoute.queryParams.subscribe((params) => {
-      console.log('params', params); // { order: "popular" }
       if ('redirectedFrom' in params) {
         this.redirectedFrom = params['redirectedFrom'];
       }

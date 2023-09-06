@@ -16,8 +16,7 @@ export class XpProgressBarComponent implements OnInit {
     this.saveService.getLevelSubject().subscribe((xpChange) => {
       this.progress = xpChange.progressPercentage;
       if (xpChange.isNewLevel) {
-        //special animation etc.
-        console.log('new level!');
+        //TODO: special animation etc.
       }
     });
   }
