@@ -238,8 +238,17 @@ export class SaveService {
     if (categoryToDelete) {
       let index = this.categories.indexOf(categoryToDelete, 0);
       //set Priority of all following indexes lower
-      for (let i = index; i < this.categories.length; i++) {
-        this.categories[i].priorityPlace--;
+      for (let i = category.priorityPlace; i < this.categories.length; i++) {
+        let otherCategory = this.findCategoryByPriority(i);
+        if (otherCategory) {
+          otherCategory.priorityPlace--;
+        }
+      }
+      //set category for all tasks that used this to default
+      for (let i = 0; i < this.allTasks.length; i++) {
+        if (this.allTasks[i].categoryId == category.id) {
+          this.allTasks[i].categoryId = 'default';
+        }
       }
       //delete
       if (index > -1) {
