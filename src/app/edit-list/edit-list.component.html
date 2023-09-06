@@ -1,6 +1,8 @@
-<p>edit-list works!</p>
+<h2>Edit Tasks</h2>
 
 <button (click)="redirect('/edit/new')">Add new Task</button>
+
+<button (click)="redirect('/categories/')">Edit Categories</button>
 
 <div class="tasksArea">
   <div class="task-container" *ngFor="let task of tasks">

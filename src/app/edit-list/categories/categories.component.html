@@ -1,0 +1,15 @@
+<h2>Edit Categories</h2>
+
+<button (click)="redirect('/categories/edit/new')">Add new Category</button>
+
+<div class="tasksArea">
+  <div class="task-container" *ngFor="let category of categories">
+    <div class="task" (click)="redirect('categories/edit/' + category.id)">
+      <div class="task-title-text" [innerHTML]="category.name"></div>
+      <div class="task-last-post">Color: {{ category.color }}</div>
+    </div>
+    <button class="task-delete-btn" (click)="deleteCategory(category)">
+      Delete
+    </button>
+  </div>
+</div>

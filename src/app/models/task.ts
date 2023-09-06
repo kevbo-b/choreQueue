@@ -9,6 +9,13 @@ export interface ITask {
   };
   addToLastDueDate: boolean;
   xp: number;
+  categoryId: string;
+}
+
+export interface ICategory {
+  id: string;
+  name: string;
+  color: string;
 }
 
 export enum IntervalMethod {

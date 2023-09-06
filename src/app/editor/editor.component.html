@@ -38,6 +38,13 @@
   >
 </div>
 
+<h4>Category</h4>
+<select [(ngModel)]="task.categoryId">
+  <option *ngFor="let category of categories" [value]="category.id">
+    {{ category.name }}
+  </option>
+</select>
+
 <h4>XP Reward</h4>
 <input [(ngModel)]="task.xp" type="number" />
 

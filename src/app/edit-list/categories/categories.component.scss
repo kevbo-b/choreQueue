@@ -1,0 +1,66 @@
+.tasksArea {
+  border-style: none none solid none;
+  border-width: 2px;
+}
+.task-container {
+  display: flex;
+  border-style: solid solid none solid;
+  border-width: 2px;
+
+  background: -webkit-linear-gradient(#b5dff7, #a4b8fc);
+  background: -moz-linear-gradient(rgb(181, 223, 247), rgb(164, 184, 252));
+  background: -o-linear-gradient(rgb(181, 223, 247), rgb(164, 184, 252));
+  background: linear-gradient(rgb(181, 223, 247), rgb(164, 184, 252));
+
+  -webkit-transition: background 1s ease-out;
+  -moz-transition: background 1s ease-out;
+  -o-transition: background 1s ease-out;
+  transition: background 1s ease-out;
+
+  background: -webkit-linear-gradient(45deg, #8ea9db, #f0f4f7);
+  background: -moz-linear-gradient(45deg, #8ea9db, #f0f4f7);
+  background: -o-linear-gradient(45deg, #8ea9db, #f0f4f7);
+  background: linear-gradient(45deg, #8ea9db, #f0f4f7);
+
+  -webkit-transition: background 0.1s ease-out;
+  -moz-transition: background 0.1s ease-out;
+  -o-transition: background 0.1s ease-out;
+  transition: background 0.1s ease-out;
+
+  background-size: 1px 300px;
+  border-radius: 0px;
+}
+.task-container:hover {
+  background-position: 700px;
+}
+.task {
+  flex: 1;
+  min-width: 0; /* or some value */
+  max-height: 60px;
+}
+.task:hover {
+  cursor: pointer;
+}
+
+.task-title-text {
+  max-height: 40px;
+  font-size: 14pt;
+  font-weight: bold;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.task-last-post {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.task-delete-btn {
+  text-align: center;
+  cursor: pointer;
+}
+.task-delete-btn:hover {
+  background-color: rgb(255, 255, 159);
+}

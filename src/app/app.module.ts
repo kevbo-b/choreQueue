@@ -13,6 +13,8 @@ import { SaveService } from './services/save.service';
 import { TimelineComponent } from './components/timeline/timeline.component';
 import { TaskPanelComponent } from './components/task-panel/task-panel.component';
 import { XpProgressBarComponent } from './components/xp-progress-bar/xp-progress-bar.component';
+import { CategoriesComponent } from './edit-list/categories/categories.component';
+import { CategoryEditorComponent } from './edit-list/categories/category-editor/category-editor.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,8 @@ import { XpProgressBarComponent } from './components/xp-progress-bar/xp-progress
     TimelineComponent,
     TaskPanelComponent,
     XpProgressBarComponent,
+    CategoriesComponent,
+    CategoryEditorComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [SaveService],

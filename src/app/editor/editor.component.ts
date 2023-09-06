@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ITask, IntervalMethod } from '../models/task';
+import { ICategory, ITask, IntervalMethod } from '../models/task';
 import { ActivatedRoute, Router } from '@angular/router';
 import { v4 as uuid } from 'uuid';
 import { SaveService } from '../services/save.service';
@@ -29,8 +29,10 @@ export class EditorComponent implements OnInit {
     },
     addToLastDueDate: false,
     xp: 100,
+    categoryId: 'default',
   };
   public intervalMethod = IntervalMethod;
+  public categories: ICategory[] = [];
 
   ngOnInit(): void {
     this.activeRoute.params.subscribe((params: Record<string, string>) => {
@@ -47,6 +49,7 @@ export class EditorComponent implements OnInit {
         } else {
           this.createNew = true;
         }
+        this.categories = this.saveService.getAllCategories();
       }
     });
   }
@@ -56,6 +59,8 @@ export class EditorComponent implements OnInit {
       this.task.addToLastDueDate = false;
     }
   }
+
+  onCategoryChange(): void {}
 
   onSavePressed(): void {
     //validation
@@ -73,9 +78,11 @@ export class EditorComponent implements OnInit {
         this.task.id = uuid();
         this.saveService.addNewTask(this.task);
         this.createNew = false;
+        console.log(this.task);
         alert('Task Created!');
       } else {
         this.saveService.editTask(this.task);
+        console.log(this.task);
         alert('Task Edited!');
       }
     }

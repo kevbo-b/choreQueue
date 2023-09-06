@@ -1,5 +1,6 @@
 import { Injectable, OnInit } from '@angular/core';
 import {
+  ICategory,
   ILevelProgress,
   ITask,
   IXpChangeMessage,
@@ -22,6 +23,14 @@ export class SaveService {
   };
   private levelProgressKey = 'levelProgress';
 
+  private categories: ICategory[] = [];
+  private defaultCategory: ICategory = {
+    id: 'default',
+    name: 'Default',
+    color: '4444BB',
+  };
+  private categoriesKey = 'taskCategories';
+
   private levelSubject = new Subject<IXpChangeMessage>();
 
   private _getData() {
@@ -41,6 +50,15 @@ export class SaveService {
     if (levelData) {
       this.levelProgress = levelData;
     }
+    //categories
+    let categoriesData = JSON.parse(
+      localStorage.getItem(this.categoriesKey) as string
+    ) as unknown as ICategory[];
+    if (categoriesData && categoriesData.length > 0) {
+      this.categories = categoriesData;
+    } else {
+      this.categories = [this.defaultCategory];
+    }
   }
 
   private _setData() {
@@ -49,6 +67,7 @@ export class SaveService {
       this.levelProgressKey,
       JSON.stringify(this.levelProgress)
     );
+    localStorage.setItem(this.categoriesKey, JSON.stringify(this.categories));
   }
 
   public getTaskById(id: string): ITask | undefined {
@@ -195,5 +214,46 @@ export class SaveService {
     const xpNeeded = this.getLevelXP(this.levelProgress.level);
     const progressPercent = (100 / xpNeeded) * this.levelProgress.xp;
     return progressPercent;
+  }
+
+  //Categories
+  public getAllCategories(): ICategory[] {
+    this._getData();
+    return this.categories;
+  }
+
+  public getCategoryById(id: string): ICategory | undefined {
+    this._getData();
+    for (let category of this.categories) {
+      if (id == category.id) {
+        return category;
+      }
+    }
+    return undefined;
+  }
+
+  public deleteCategory(category: ICategory): void {
+    let categoryToDelete = this.getCategoryById(category.id);
+    if (categoryToDelete) {
+      let index = this.categories.indexOf(categoryToDelete, 0);
+      if (index > -1) {
+        this.categories.splice(index, 1);
+      }
+    }
+    this._setData();
+  }
+
+  public addNewCategory(category: ICategory): void {
+    this.categories.push(category);
+    this._setData();
+  }
+
+  public editCategory(category: ICategory): void {
+    let categoryToEdit = this.getCategoryById(category.id);
+    if (categoryToEdit) {
+      categoryToEdit.name = category.name;
+      categoryToEdit.color = category.color;
+    }
+    this._setData();
   }
 }

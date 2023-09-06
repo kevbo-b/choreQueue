@@ -1,0 +1,14 @@
+<p>category-editor works!</p>
+
+<div><button (click)="onBackPressed()">Back</button></div>
+
+<h1 *ngIf="createNew">Create New Category</h1>
+<h1 *ngIf="!createNew">Edit Category</h1>
+
+<h4>Name</h4>
+<input [(ngModel)]="category.name" />
+
+<h4>Color</h4>
+<input [(ngModel)]="category.color" />
+
+<button (click)="onSavePressed()">Save</button>

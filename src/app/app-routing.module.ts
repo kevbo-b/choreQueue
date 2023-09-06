@@ -4,6 +4,8 @@ import { HomeComponent } from './home/home.component';
 import { LevelComponent } from './level/level.component';
 import { EditorComponent } from './editor/editor.component';
 import { EditListComponent } from './edit-list/edit-list.component';
+import { CategoriesComponent } from './edit-list/categories/categories.component';
+import { CategoryEditorComponent } from './edit-list/categories/category-editor/category-editor.component';
 
 const routes: Routes = [
   {
@@ -25,6 +27,15 @@ const routes: Routes = [
   {
     path: 'level',
     component: LevelComponent,
+  },
+
+  {
+    path: 'categories',
+    component: CategoriesComponent,
+  },
+  {
+    path: 'categories/edit/:id',
+    component: CategoryEditorComponent,
   },
   { path: '**', component: HomeComponent },
 ];
