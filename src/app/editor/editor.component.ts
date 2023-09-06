@@ -34,6 +34,8 @@ export class EditorComponent implements OnInit {
   public intervalMethod = IntervalMethod;
   public categories: ICategory[] = [];
 
+  private redirectedFrom = 'edit';
+
   ngOnInit(): void {
     this.activeRoute.params.subscribe((params: Record<string, string>) => {
       if ('id' in params) {
@@ -50,6 +52,13 @@ export class EditorComponent implements OnInit {
           this.createNew = true;
         }
         this.categories = this.saveService.getAllCategories();
+      }
+    });
+
+    this.activeRoute.queryParams.subscribe((params) => {
+      console.log('params', params); // { order: "popular" }
+      if ('redirectedFrom' in params) {
+        this.redirectedFrom = params['redirectedFrom'];
       }
     });
   }
@@ -78,17 +87,15 @@ export class EditorComponent implements OnInit {
         this.task.id = uuid();
         this.saveService.addNewTask(this.task);
         this.createNew = false;
-        console.log(this.task);
         alert('Task Created!');
       } else {
         this.saveService.editTask(this.task);
-        console.log(this.task);
         alert('Task Edited!');
       }
     }
   }
 
   onBackPressed(): void {
-    this.router.navigate(['/edit']);
+    this.router.navigate(['/' + this.redirectedFrom]);
   }
 }

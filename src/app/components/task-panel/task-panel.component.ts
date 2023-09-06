@@ -28,4 +28,10 @@ export class TaskPanelComponent {
       this.taskDeleted.emit();
     }
   }
+
+  redirectToEdit(taskId: string): void {
+    this.router.navigate(['/edit/' + taskId], {
+      queryParams: { redirectedFrom: 'home' },
+    });
+  }
 }
