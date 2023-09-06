@@ -34,6 +34,7 @@ export class EditorComponent implements OnInit {
   public intervalMethod = IntervalMethod;
   public categories: ICategory[] = [];
 
+  public MAX_XP = 1000;
   private redirectedFrom = 'edit';
 
   ngOnInit(): void {
@@ -75,10 +76,12 @@ export class EditorComponent implements OnInit {
     if (
       this.task.title === '' ||
       this.task.nextDueDate === '' ||
-      this.task.interval.num < 1
+      this.task.interval.num < 1 ||
+      this.task.xp < 0 ||
+      this.task.xp > this.MAX_XP
     ) {
       alert(
-        'Error: Not saved! Wrong inputs in title, nextDueDate, or intervalInDays.'
+        'Error: Not saved! Wrong inputs in title, nextDueDate, interval or XP.'
       );
     } else {
       //if inputs are ok...

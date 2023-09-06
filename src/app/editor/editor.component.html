@@ -46,6 +46,6 @@
 </select>
 
 <h4>XP Reward</h4>
-<input [(ngModel)]="task.xp" type="number" />
+<input [(ngModel)]="task.xp" type="number" min="0" max="{{ MAX_XP }}" />
 
 <button (click)="onSavePressed()">Save</button>
