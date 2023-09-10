@@ -1,7 +1,12 @@
 <div class="tasksArea">
   <div class="task-container" *ngFor="let miniTask of miniTasks">
-    <label>
-      <input type="checkbox" (change)="onCheckChange($event, miniTask)" />
+    <label [ariaDisabled]="isDisabledTask(miniTask.id)">
+      <input
+        [disabled]="isDisabledTask(miniTask.id)"
+        type="checkbox"
+        (change)="onCheckChange($event, miniTask)"
+        [checked]="isDisabledTask(miniTask.id)"
+      />
       {{ miniTask.title }}
     </label>
   </div>

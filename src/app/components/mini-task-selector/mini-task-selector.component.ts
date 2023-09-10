@@ -11,7 +11,9 @@ import { SaveService } from 'src/app/services/save.service';
 export class MiniTaskSelectorComponent implements OnInit {
   @Output() public miniTasksSelected = new EventEmitter();
 
+  allTasks: ITask[] = [];
   miniTasks: ITask[] = [];
+  disabledIds: string[] = []; //Tasks that already are in the task timeline
   selectedMiniTasks: ITask[] = [];
 
   public constructor(
@@ -25,34 +27,28 @@ export class MiniTaskSelectorComponent implements OnInit {
 
   getData() {
     this.miniTasks = this.saveService.getAllMiniTasks();
+    this.allTasks = this.saveService.getAllTasks();
+    //determine disabled Tasks
+    for (let miniTask of this.miniTasks) {
+      for (let task of this.allTasks) {
+        if (miniTask.id == task.id) {
+          this.disabledIds.push(miniTask.id);
+          break;
+        }
+      }
+    }
   }
 
-  // addMiniTask(): void {
-  //   //validation
-  //   if (this.xpField < 0 || this.xpField > this.MAX_XP) {
-  //     alert('Error: Not saved! Wrong inputs in XP.');
-  //   } else {
-  //     this.saveService.addNewMiniTask({
-  //       id: uuid(),
-  //       title: this.titleField,
-  //       xp: this.xpField,
-  //       addToLastDueDate: false,
-  //       categoryId: 'miniTask',
-  //       description: '',
-  //       interval: {
-  //         method: IntervalMethod.NeverRepeat,
-  //         num: -1,
-  //       },
-  //       nextDueDate: '',
-  //     });
-  //     this.titleField = '';
-  //     this.getData();
-  //     alert('Mini-task Created!');
-  //   }
-  // }
+  isDisabledTask(id: string): boolean {
+    for (let disabledId of this.disabledIds) {
+      if (disabledId == id) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   onCheckChange(event: any, miniTask: ITask) {
-    console.log(event.target.checked);
     if (event.target.checked) {
       //add to list
       this.selectedMiniTasks.push(miniTask);
