@@ -21,6 +21,7 @@
         <button (click)="redirectToEdit(task.id)">edit</button>
         <button (click)="deletePrompt()">delete</button>
         <span>XP: +{{ task.xp }} </span>
+        <span *ngIf="due">{{ dueSinceStr(task) }}</span>
       </div>
     </div>
   </div>

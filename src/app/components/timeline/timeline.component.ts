@@ -106,4 +106,23 @@ export class TimelineComponent implements OnInit {
       });
     }
   }
+
+  public daysTillDue(date: string): number {
+    let today = new Date();
+    let dateOfDay = new Date(date);
+
+    var diff = Math.abs(today.getTime() - dateOfDay.getTime());
+    var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+
+    return diffDays;
+  }
+
+  public daysTillDueStr(date: string): string {
+    let days = this.daysTillDue(date);
+    if (days == 1) {
+      return `1 day`;
+    } else {
+      return `${days} days`;
+    }
+  }
 }

@@ -19,10 +19,14 @@
 
 <div class="day-container" *ngFor="let day of days">
   <div *ngIf="!isDue(day.date)" class="notDueYet">
-    <h2>{{ day.date | date }} ({{ day.date | date : "EE" }})</h2>
+    <h2>
+      {{ day.date | date }} ({{ day.date | date : "EE" }}) (in
+      {{ daysTillDueStr(day.date) }})
+    </h2>
     <div class="task-container" *ngFor="let task of day.tasks">
       <app-task-panel
         [task]="task"
+        [due]="false"
         [categories]="categories"
         (taskSkipped)="skipTask(task)"
         (taskCompleted)="completeTask(task)"

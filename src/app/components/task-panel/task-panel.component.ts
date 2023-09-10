@@ -44,4 +44,25 @@ export class TaskPanelComponent {
     }
     return '#4444bb';
   }
+
+  dueSince(task: ITask): number {
+    let today = new Date();
+    let dueDate = new Date(task?.nextDueDate);
+
+    var diff = Math.abs(today.getTime() - dueDate.getTime());
+    var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+
+    return diffDays;
+  }
+
+  dueSinceStr(task: ITask): string {
+    let days = this.dueSince(task);
+    if (days == 0) {
+      return `Due since Today (0 days)`;
+    } else if (days == 1) {
+      return `Due since 1 day`;
+    } else {
+      return `Due since ${days} days`;
+    }
+  }
 }
