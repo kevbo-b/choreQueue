@@ -1,5 +1,14 @@
 <p>home works!</p>
 
+<button (click)="redirectToEditor()">Add Task</button>
+<button (click)="popupMiniTasks()">Add Mini Task</button>
+
+<div *ngIf="showMiniTaskPopup">
+  <app-mini-task-selector
+    (miniTasksSelected)="onMiniTasksSelected()"
+  ></app-mini-task-selector>
+</div>
+
 <app-timeline></app-timeline>
 
 <app-xp-progress-bar></app-xp-progress-bar>

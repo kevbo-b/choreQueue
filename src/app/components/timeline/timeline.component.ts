@@ -16,6 +16,11 @@ export class TimelineComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildTimelineData();
+    this.saveService.getOnChangeSubject().subscribe((tasks) => {
+      this._tasks = tasks;
+      console.log('new');
+      this.sortByDueDate();
+    });
   }
 
   skipTask(task: ITask) {

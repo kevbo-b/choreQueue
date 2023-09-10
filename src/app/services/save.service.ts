@@ -32,7 +32,12 @@ export class SaveService {
   };
   private categoriesKey = 'taskCategories';
 
+  private miniTasks: ITask[] = [];
+  private miniTasksKey: string = 'miniTasks';
+
   private levelSubject = new Subject<IXpChangeMessage>();
+
+  private onChangeSubject = new Subject<ITask[]>();
 
   private _getData() {
     //tasks
@@ -60,6 +65,13 @@ export class SaveService {
     } else {
       this.categories = [this.defaultCategory];
     }
+    //mini tasks
+    let miniTasks = JSON.parse(
+      localStorage.getItem(this.miniTasksKey) as string
+    ) as unknown as ITask[];
+    if (miniTasks && miniTasks.length > 0) {
+      this.miniTasks = miniTasks;
+    }
   }
 
   private _setData() {
@@ -69,6 +81,7 @@ export class SaveService {
       JSON.stringify(this.levelProgress)
     );
     localStorage.setItem(this.categoriesKey, JSON.stringify(this.categories));
+    localStorage.setItem(this.miniTasksKey, JSON.stringify(this.miniTasks));
   }
 
   public getTaskById(id: string): ITask | undefined {
@@ -148,14 +161,18 @@ export class SaveService {
       );
     }
 
-    var getYear = newDate.toLocaleString('default', { year: 'numeric' });
-    var getMonth = newDate.toLocaleString('default', { month: '2-digit' });
-    var getDay = newDate.toLocaleString('default', { day: '2-digit' });
+    return this.convertDateToString(newDate);
+  }
+
+  private convertDateToString(date: Date): string {
+    var getYear = date.toLocaleString('default', { year: 'numeric' });
+    var getMonth = date.toLocaleString('default', { month: '2-digit' });
+    var getDay = date.toLocaleString('default', { day: '2-digit' });
 
     return getYear + '-' + getMonth + '-' + getDay;
   }
 
-  //leveling
+  //-------------leveling
   public getLevelProgress(): ILevelProgress {
     this._getData();
     return this.levelProgress;
@@ -217,7 +234,7 @@ export class SaveService {
     return progressPercent;
   }
 
-  //Categories
+  //-------------Categories
   public getAllCategories(): ICategory[] {
     this._getData();
     return this.categories;
@@ -312,5 +329,54 @@ export class SaveService {
       categoryToEdit.color = category.color;
     }
     this._setData();
+  }
+
+  //-------------Mini Tasks
+  public getAllMiniTasks(): ITask[] {
+    this._getData();
+    return this.miniTasks;
+  }
+
+  public deleteMiniTask(minitask: ITask): void {
+    let taskToEdit = this.getMiniTaskById(minitask.id);
+    if (taskToEdit) {
+      let index = this.miniTasks.indexOf(taskToEdit, 0);
+      if (index > -1) {
+        this.miniTasks.splice(index, 1);
+      }
+    }
+    this._setData();
+  }
+
+  public getMiniTaskById(id: string): ITask | undefined {
+    this._getData();
+    for (let miniTask of this.miniTasks) {
+      if (id == miniTask.id) {
+        return miniTask;
+      }
+    }
+    return undefined;
+  }
+
+  public addNewMiniTask(miniTask: ITask): void {
+    this.miniTasks.push(miniTask);
+    this._setData();
+  }
+
+  public addMiniTasksToQueue(miniTasks: ITask[]): void {
+    this._getData();
+    for (let miniTask of miniTasks) {
+      miniTask.nextDueDate = this.convertDateToString(new Date());
+    }
+    this.allTasks = [...this.allTasks, ...miniTasks];
+    this._setData();
+  }
+
+  public getOnChangeSubject(): Subject<ITask[]> {
+    return this.onChangeSubject;
+  }
+
+  public emitOnChangesSubject(): void {
+    this.onChangeSubject.next(this.allTasks);
   }
 }

@@ -4,6 +4,8 @@
 
 <button (click)="redirect('/categories/')">Edit Categories</button>
 
+<button (click)="redirect('/miniTasks/')">Edit Mini Tasks List</button>
+
 <div class="tasksArea">
   <div class="task-container" *ngFor="let task of tasks">
     <div class="task" (click)="redirect('/edit/' + task.id)">

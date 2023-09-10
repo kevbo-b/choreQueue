@@ -1,0 +1,20 @@
+<h2>Edit Mini Tasks</h2>
+
+<h4>Task Name</h4>
+<input [(ngModel)]="titleField" />
+
+<h4>XP Reward</h4>
+<input [(ngModel)]="xpField" type="number" min="0" max="{{ MAX_XP }}" />
+
+<button (click)="addMiniTask()">Add Task</button>
+
+<div class="tasksArea">
+  <div class="task-container" *ngFor="let miniTask of miniTasks">
+    <div class="task">
+      <div class="task-title-text" [innerHTML]="miniTask.title"></div>
+    </div>
+    <button class="task-delete-btn" (click)="deleteMiniTask(miniTask)">
+      Delete
+    </button>
+  </div>
+</div>

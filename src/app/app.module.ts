@@ -15,6 +15,8 @@ import { TaskPanelComponent } from './components/task-panel/task-panel.component
 import { XpProgressBarComponent } from './components/xp-progress-bar/xp-progress-bar.component';
 import { CategoriesComponent } from './edit-list/categories/categories.component';
 import { CategoryEditorComponent } from './edit-list/categories/category-editor/category-editor.component';
+import { MiniTaskListComponent } from './edit-list/mini-task-list/mini-task-list.component';
+import { MiniTaskSelectorComponent } from './components/mini-task-selector/mini-task-selector.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,8 @@ import { CategoryEditorComponent } from './edit-list/categories/category-editor/
     XpProgressBarComponent,
     CategoriesComponent,
     CategoryEditorComponent,
+    MiniTaskListComponent,
+    MiniTaskSelectorComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [SaveService],

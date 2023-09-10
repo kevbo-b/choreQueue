@@ -1,0 +1,14 @@
+<div class="tasksArea">
+  <div class="task-container" *ngFor="let miniTask of miniTasks">
+    <label>
+      <input type="checkbox" (change)="onCheckChange($event, miniTask)" />
+      {{ miniTask.title }}
+    </label>
+  </div>
+  <button
+    [disabled]="selectedMiniTasks.length == 0"
+    (click)="emitSelectedMiniTasks()"
+  >
+    Add selected Mini-Tasks
+  </button>
+</div>
