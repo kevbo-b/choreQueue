@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { round } from 'lodash';
 import { ICategory, IDay, ITask } from 'src/app/models/task';
 import { SaveService } from 'src/app/services/save.service';
 
@@ -125,4 +126,82 @@ export class TimelineComponent implements OnInit {
       return `${days} days`;
     }
   }
+
+  moonIcons: [
+    New: string,
+    WaxingCrescent: string,
+    QuarterMoon: string,
+    WaxingGibbous: string,
+    Full: string,
+    WaningGibbous: string,
+    LastQuarter: string,
+    WaningCrescent: string
+  ] = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
+
+  public getMoonIcon(dateStr: string): string {
+    let date = new Date(dateStr);
+    return this.moonPhase(
+      date.getFullYear(),
+      date.getMonth() + 1,
+      date.getDate()
+    );
+  }
+
+  LUNAR_CYCLE = 29.5305882; // 29.53058770576
+  DAYS_PER_YEAR = 365.25;
+  DAYS_PER_MONTH = 30.6;
+
+  // Number of days since known new moon on `1900-01-01`.
+  DAYS_SINCE_NEW_MOON_1900_01_01 = 694039.09;
+
+  moonPhaseAlt(date: Date = new Date()): string {
+    // let year = date.getYear()
+    let year: number = date.getFullYear();
+
+    let month: number = date.getMonth() + 1;
+    const day: number = date.getDate();
+    return this.moonPhase(year, month, day);
+  }
+
+  // Ported from `http://www.voidware.com/moon_phase.htm`.
+  moonPhase(year: number, month: number, day: number): string {
+    console.log(year, month, day);
+    if (month < 3) {
+      year--;
+      month += 12;
+    }
+
+    month += 1;
+
+    let totalDaysElapsed: number =
+      this.DAYS_PER_YEAR * year +
+      this.DAYS_PER_MONTH * month +
+      day -
+      this.DAYS_SINCE_NEW_MOON_1900_01_01;
+
+    totalDaysElapsed /= this.LUNAR_CYCLE; // Divide by the lunar cycle.
+
+    let phase: number = Math.trunc(totalDaysElapsed);
+
+    /*
+      Subtract integer part to leave fractional part of original
+      `totalDaysElapsed`.
+    */
+    totalDaysElapsed -= phase;
+
+    // Scale fraction from `0-8`.
+    phase = round(totalDaysElapsed * 8);
+    if (phase >= this.moonIcons.length || phase < 0) {
+      return '';
+    }
+
+    if (phase >= 8) phase = 0; // `0` and `8` are the same so turn `8` into `0`.
+    return this.moonIcons[phase];
+  }
+}
+
+export interface IResult {
+  name: string;
+  phase: string;
+  icon: string;
 }
