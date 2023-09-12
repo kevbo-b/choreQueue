@@ -8,7 +8,14 @@
 
 <div class="tasksArea">
   <div class="task-container" *ngFor="let task of tasks">
-    <div class="task" (click)="redirect('/edit/' + task.id)">
+    <div
+      class="task"
+      [ngStyle]="{
+        background:
+          '-webkit-linear-gradient(' + getCategoryColor(task) + ', #ffffff)'
+      }"
+      (click)="redirect('/edit/' + task.id)"
+    >
       <div class="task-title-text" [innerHTML]="task.title"></div>
       <div class="task-last-post">
         Next due: {{ task.nextDueDate | date : "dd.MM.yyyy" }}
