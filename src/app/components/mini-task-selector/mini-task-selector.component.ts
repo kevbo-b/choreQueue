@@ -75,7 +75,7 @@ export class MiniTaskSelectorComponent implements OnInit {
         title: this.customMiniTaskText,
         xp: this.customMiniTaskXP,
         addToLastDueDate: false,
-        categoryId: 'miniTask',
+        categoryId: 'default',
         description: '',
         interval: {
           method: IntervalMethod.NeverRepeat,

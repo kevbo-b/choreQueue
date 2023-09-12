@@ -36,9 +36,9 @@ export class TaskPanelComponent {
     });
   }
 
-  getCategoryColor(taskId: ITask): string {
+  getCategoryColor(task: ITask): string {
     for (let category of this.categories) {
-      if (category.id == taskId.categoryId) {
+      if (category.id == task.categoryId) {
         return category.color;
       }
     }
