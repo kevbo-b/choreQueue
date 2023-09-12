@@ -14,7 +14,7 @@
       <div class="task-title-text" [innerHTML]="category.name"></div>
       <div class="task-last-post">Priority: {{ category.priorityPlace }}</div>
     </div>
-    <!-- non-user made ids will be under 10 characters, and should not be deleted -->
+    <!-- non-user made ids will be under 10 characters, and should not be deleted (for example: Default Category) -->
     <button
       *ngIf="category.id.length > 10"
       class="task-delete-btn"

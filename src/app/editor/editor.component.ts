@@ -3,6 +3,7 @@ import { ICategory, ITask, IntervalMethod } from '../models/task';
 import { ActivatedRoute, Router } from '@angular/router';
 import { v4 as uuid } from 'uuid';
 import { SaveService } from '../services/save.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-editor',
@@ -42,7 +43,7 @@ export class EditorComponent implements OnInit {
       if ('id' in params) {
         this.taskId = params['id'];
         if (this.taskId && this.taskId !== 'new') {
-          let task = this.saveService.getTaskById(this.taskId);
+          let task = _.cloneDeep(this.saveService.getTaskById(this.taskId));
           if (task) {
             this.task = task;
           } else {
@@ -90,9 +91,11 @@ export class EditorComponent implements OnInit {
         this.saveService.addNewTask(this.task);
         this.createNew = false;
         alert('Task Created!');
+        this.task = _.cloneDeep(this.task); //decouple reference
       } else {
         this.saveService.editTask(this.task);
         alert('Task Edited!');
+        this.task = _.cloneDeep(this.task); //decouple reference
       }
     }
   }
