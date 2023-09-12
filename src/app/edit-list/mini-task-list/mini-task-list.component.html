@@ -1,20 +1,35 @@
-<h2>Edit Mini Tasks</h2>
-
-<h4>Task Name</h4>
-<input [(ngModel)]="titleField" />
-
-<h4>XP Reward</h4>
-<input [(ngModel)]="xpField" type="number" min="0" max="{{ MAX_XP }}" />
-
-<button (click)="addMiniTask()">Add Task</button>
+<h2>Edit Mini Tasks List</h2>
 
 <div class="tasksArea">
-  <div class="task-container" *ngFor="let miniTask of miniTasks">
+  <div
+    class="task-container"
+    *ngFor="let miniTask of miniTasks"
+    [ngStyle]="{
+      background:
+        '-webkit-linear-gradient(' + getCategoryColor(miniTask) + ', #ffffff)'
+    }"
+  >
     <div class="task">
       <div class="task-title-text" [innerHTML]="miniTask.title"></div>
     </div>
     <button class="task-delete-btn" (click)="deleteMiniTask(miniTask)">
       Delete
     </button>
+  </div>
+</div>
+
+<div class="editRow">
+  <div>
+    <h4>Task Name</h4>
+    <input [(ngModel)]="titleField" />
+  </div>
+
+  <div>
+    <h4>XP Reward</h4>
+    <input [(ngModel)]="xpField" type="number" min="0" max="{{ MAX_XP }}" />
+  </div>
+
+  <div class="addBtnContainer">
+    <button (click)="addMiniTask()">Add Task</button>
   </div>
 </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ITask, IntervalMethod } from 'src/app/models/task';
+import { ICategory, ITask, IntervalMethod } from 'src/app/models/task';
 import { SaveService } from 'src/app/services/save.service';
 import { v4 as uuid } from 'uuid';
 
@@ -15,6 +15,8 @@ export class MiniTaskListComponent implements OnInit {
   public xpField = 50;
   public titleField = '';
 
+  public categories: ICategory[] = [];
+
   public MAX_XP = 1000;
 
   public constructor(
@@ -23,6 +25,7 @@ export class MiniTaskListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.categories = this.saveService.getAllCategories();
     this.getData();
   }
 
@@ -35,14 +38,8 @@ export class MiniTaskListComponent implements OnInit {
   }
 
   deleteMiniTask(miniTask: ITask): void {
-    if (
-      confirm(
-        `Are you sure you want to delete "${miniTask.title}" permanently?`
-      ) == true
-    ) {
-      this.saveService.deleteMiniTask(miniTask);
-      this.getData();
-    }
+    this.saveService.deleteMiniTask(miniTask);
+    this.getData();
   }
 
   addMiniTask(): void {
@@ -55,7 +52,7 @@ export class MiniTaskListComponent implements OnInit {
         title: this.titleField,
         xp: this.xpField,
         addToLastDueDate: false,
-        categoryId: 'miniTask',
+        categoryId: 'default',
         description: '',
         interval: {
           method: IntervalMethod.NeverRepeat,
@@ -65,7 +62,15 @@ export class MiniTaskListComponent implements OnInit {
       });
       this.titleField = '';
       this.getData();
-      alert('Mini-task Created!');
     }
+  }
+
+  getCategoryColor(miniTask: ITask): string {
+    for (let category of this.categories) {
+      if (category.id == miniTask.categoryId) {
+        return category.color;
+      }
+    }
+    return '#4444bb';
   }
 }
