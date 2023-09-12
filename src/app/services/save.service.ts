@@ -133,7 +133,7 @@ export class SaveService {
       if (gainXP) {
         this.addXP(inputtedTask.xp);
       }
-      if (task.interval.method === IntervalMethod.NeverRepeat) {
+      if (task.interval.method == IntervalMethod.NeverRepeat) {
         this.deleteTask(task);
         return;
       }
