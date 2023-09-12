@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { ITask } from 'src/app/models/task';
+import { ITask, IntervalMethod } from 'src/app/models/task';
 import { SaveService } from 'src/app/services/save.service';
+import { v4 as uuid } from 'uuid';
 
 @Component({
   selector: 'app-mini-task-selector',
@@ -15,6 +16,10 @@ export class MiniTaskSelectorComponent implements OnInit {
   miniTasks: ITask[] = [];
   disabledIds: string[] = []; //Tasks that already are in the task timeline
   selectedMiniTasks: ITask[] = [];
+
+  customMiniTaskChecked = false;
+  customMiniTaskText = '';
+  customMiniTaskXP = 100;
 
   public constructor(
     public readonly router: Router,
@@ -64,6 +69,21 @@ export class MiniTaskSelectorComponent implements OnInit {
   }
 
   emitSelectedMiniTasks() {
+    if (this.customMiniTaskChecked && this.customMiniTaskText) {
+      this.selectedMiniTasks.push({
+        id: uuid(),
+        title: this.customMiniTaskText,
+        xp: this.customMiniTaskXP,
+        addToLastDueDate: false,
+        categoryId: 'miniTask',
+        description: '',
+        interval: {
+          method: IntervalMethod.NeverRepeat,
+          num: -1,
+        },
+        nextDueDate: '',
+      });
+    }
     this.saveService.addMiniTasksToQueue(this.selectedMiniTasks);
     this.saveService.emitOnChangesSubject();
     this.miniTasksSelected.emit();

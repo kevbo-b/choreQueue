@@ -10,8 +10,25 @@
       {{ miniTask.title }}
     </label>
   </div>
+  <div class="task-container">
+    <input [(ngModel)]="customMiniTaskChecked" type="checkbox" />
+    <input
+      [disabled]="!customMiniTaskChecked"
+      [(ngModel)]="customMiniTaskText"
+      type="text"
+      placeholder="custom mini task"
+    />
+    <input
+      [disabled]="!customMiniTaskChecked"
+      [(ngModel)]="customMiniTaskXP"
+      type="number"
+    />
+  </div>
   <button
-    [disabled]="selectedMiniTasks.length == 0"
+    [disabled]="
+      selectedMiniTasks.length == 0 &&
+      (!customMiniTaskChecked || customMiniTaskText == '')
+    "
     (click)="emitSelectedMiniTasks()"
   >
     Add selected Mini-Tasks
