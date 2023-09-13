@@ -107,6 +107,7 @@ export class SaveService {
       taskToEdit.nextDueDate = task.nextDueDate;
       taskToEdit.interval = task.interval;
       taskToEdit.xp = task.xp;
+      taskToEdit.categoryId = task.categoryId;
     }
     this._setData();
   }

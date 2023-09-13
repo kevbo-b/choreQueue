@@ -70,8 +70,6 @@ export class EditorComponent implements OnInit {
     }
   }
 
-  onCategoryChange(): void {}
-
   onSavePressed(): void {
     //validation
     if (
