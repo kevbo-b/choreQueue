@@ -3,11 +3,17 @@
 <button (click)="redirectToEditor()">Add Task</button>
 <button (click)="popupMiniTasks()">Add Mini Task</button>
 
-<div *ngIf="showMiniTaskPopup">
+<p-dialog
+  header="Add Mini-Task"
+  [(visible)]="showMiniTaskPopup"
+  [style]="{ width: '50vw', height: '300px' }"
+  (onHide)="showMiniTaskPopup = false"
+>
   <app-mini-task-selector
+    *ngIf="showMiniTaskPopup"
     (miniTasksSelected)="onMiniTasksSelected()"
   ></app-mini-task-selector>
-</div>
+</p-dialog>
 
 <app-timeline></app-timeline>
 
