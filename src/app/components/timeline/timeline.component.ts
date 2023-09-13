@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { round } from 'lodash';
+import * as _ from 'lodash';
+import { isNumber, round } from 'lodash';
 import { ICategory, IDay, ITask, IntervalMethod } from 'src/app/models/task';
 import { SaveService } from 'src/app/services/save.service';
 
@@ -42,7 +43,7 @@ export class TimelineComponent implements OnInit {
   }
 
   calcNewDueDateForSkip(daysToSkip: number) {
-    if (this.skipDialogTask?.nextDueDate) {
+    if (this.skipDialogTask?.nextDueDate && _.isNumber(daysToSkip)) {
       this.newDueDateOnSkip = new Date(this.skipDialogTask?.nextDueDate);
       this.newDueDateOnSkip.setDate(
         this.newDueDateOnSkip.getDate() + daysToSkip
@@ -51,7 +52,7 @@ export class TimelineComponent implements OnInit {
   }
 
   public skipTask(task: ITask): void {
-    if (task) {
+    if (task && _.isNumber(this.daysToSkip)) {
       this.saveService.skipTask(task, IntervalMethod.Day, this.daysToSkip);
     }
     this.showSkipDialog = false;
