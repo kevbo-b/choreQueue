@@ -50,7 +50,7 @@ export class TaskPanelComponent {
     let dueDate = new Date(task?.nextDueDate);
 
     var diff = Math.abs(today.getTime() - dueDate.getTime());
-    var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+    var diffDays = Math.ceil(diff / (1000 * 3600 * 24)) - 1;
 
     return diffDays;
   }
@@ -58,7 +58,7 @@ export class TaskPanelComponent {
   dueSinceStr(task: ITask): string {
     let days = this.dueSince(task);
     if (days == 0) {
-      return `Due since Today (0 days)`;
+      return `Due since Today`;
     } else if (days == 1) {
       return `Due since 1 day`;
     } else {
