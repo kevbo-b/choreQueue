@@ -27,7 +27,7 @@ export class SaveService {
   private defaultCategory: ICategory = {
     id: 'default',
     name: 'Default',
-    color: '4444BB',
+    color: '#4444BB9a',
     priorityPlace: 0,
   };
   private categoriesKey = 'taskCategories';

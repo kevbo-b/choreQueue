@@ -24,6 +24,8 @@ export class CategoryEditorComponent {
     name: '',
     priorityPlace: -1,
   };
+  color: string = '';
+  opacity: number = 255;
 
   ngOnInit(): void {
     this.activeRoute.params.subscribe((params: Record<string, string>) => {
@@ -33,6 +35,8 @@ export class CategoryEditorComponent {
           let category = this.saveService.getCategoryById(this.categoryId);
           if (category) {
             this.category = category;
+            this.color = this.category.color.substring(0, 7);
+            this.opacity = Number('0x' + this.category.color.substring(7, 9));
           } else {
             alert(`Task with the ID ${this.categoryId} not found`);
             this.createNew = true;
@@ -46,10 +50,16 @@ export class CategoryEditorComponent {
 
   onSavePressed(): void {
     //validation
-    if (this.category.name === '' || this.category.color === '') {
-      alert('Error: Not saved! Wrong inputs in name or color.');
+    if (
+      this.category.name === '' ||
+      this.color === '' ||
+      this.opacity > 255 ||
+      this.opacity < 0
+    ) {
+      alert('Error: Not saved! Wrong inputs in name, color or opacity.');
     } else {
       //if inputs are ok...
+      this.category.color = this.color + this.opacity.toString(16);
       if (this.createNew) {
         this.category.id = uuid();
         this.saveService.addNewCategory(this.category);

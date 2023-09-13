@@ -27,7 +27,6 @@ export class EditListComponent implements OnInit {
     this.tasks.sort((a: ITask, b: ITask) => {
       let catA = this.getTaskCategory(a);
       let catB = this.getTaskCategory(b);
-      console.log(a, catA);
 
       if (catA && catB) {
         if (catA?.priorityPlace > catB?.priorityPlace) {

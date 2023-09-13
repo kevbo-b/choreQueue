@@ -9,6 +9,9 @@
 <input [(ngModel)]="category.name" />
 
 <h4>Color</h4>
-<input type="color" [(ngModel)]="category.color" />
+<input type="color" [(ngModel)]="color" />
+
+<h4>Opacity (0-255)</h4>
+<input type="number" min="0" max="255" [(ngModel)]="opacity" />
 
 <button (click)="onSavePressed()">Save</button>
