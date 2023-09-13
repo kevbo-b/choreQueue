@@ -127,38 +127,58 @@ export class SaveService {
     return this.allTasks;
   }
 
-  public completeTask(inputtedTask: ITask, gainXP: boolean = true): void {
+  public completeTask(inputtedTask: ITask): void {
     var task = this.getTaskById(inputtedTask.id);
     if (task) {
-      if (gainXP) {
-        this.addXP(inputtedTask.xp);
-      }
+      this.addXP(inputtedTask.xp);
       if (task.interval.method == IntervalMethod.NeverRepeat) {
         this.deleteTask(task);
         return;
       }
-      task.nextDueDate = this.setNextDueDate(task);
+      task.nextDueDate = this.setNextDueDate(
+        task,
+        task.interval.method,
+        task.interval.num
+      );
       this._setData();
     }
   }
 
-  private setNextDueDate(task: ITask): string {
+  public skipTask(
+    inputtedTask: ITask,
+    intervalMethod: IntervalMethod,
+    amountToSkip: number
+  ): void {
+    var task = this.getTaskById(inputtedTask.id);
+    if (task) {
+      task.nextDueDate = this.setNextDueDate(
+        inputtedTask,
+        intervalMethod,
+        amountToSkip,
+        true
+      );
+      this._setData();
+    }
+  }
+
+  private setNextDueDate(
+    task: ITask,
+    intervalMethod: IntervalMethod,
+    offset: number,
+    forceCalcOnPrevDueDate = false
+  ): string {
     var baseDate = new Date(); //begin today
-    if (task.addToLastDueDate) {
+    if (task.addToLastDueDate || forceCalcOnPrevDueDate) {
       baseDate = new Date(task.nextDueDate); //begin on last supposed due Date
     }
     var newDate = new Date(baseDate);
     //Add interval
-    if (task.interval.method == IntervalMethod.Day) {
-      newDate.setDate(newDate.getDate() + task.interval.num);
-    } else if (task.interval.method == IntervalMethod.Month) {
-      newDate = new Date(
-        newDate.setMonth(newDate.getMonth() + task.interval.num)
-      );
-    } else if (task.interval.method == IntervalMethod.Year) {
-      newDate = new Date(
-        baseDate.setFullYear(baseDate.getFullYear() + task.interval.num)
-      );
+    if (intervalMethod == IntervalMethod.Day) {
+      newDate.setDate(newDate.getDate() + offset);
+    } else if (intervalMethod == IntervalMethod.Month) {
+      newDate = new Date(newDate.setMonth(newDate.getMonth() + offset));
+    } else if (intervalMethod == IntervalMethod.Year) {
+      newDate = new Date(baseDate.setFullYear(baseDate.getFullYear() + offset));
     }
 
     return this.convertDateToString(newDate);

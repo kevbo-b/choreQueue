@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { round } from 'lodash';
-import { ICategory, IDay, ITask } from 'src/app/models/task';
+import { ICategory, IDay, ITask, IntervalMethod } from 'src/app/models/task';
 import { SaveService } from 'src/app/services/save.service';
 
 @Component({
@@ -13,6 +13,11 @@ export class TimelineComponent implements OnInit {
   public days: IDay[] = [];
   public categories: ICategory[] = [];
 
+  public showSkipDialog = false;
+  public skipDialogTask: ITask | undefined;
+  public daysToSkip: number = 0;
+  public newDueDateOnSkip: Date = new Date();
+
   public constructor(public readonly saveService: SaveService) {}
 
   ngOnInit(): void {
@@ -23,8 +28,31 @@ export class TimelineComponent implements OnInit {
     });
   }
 
-  skipTask(task: ITask) {
-    this.saveService.completeTask(task, false);
+  openSkipTaskPopup(task: ITask) {
+    this.showSkipDialog = true;
+    this.skipDialogTask = task;
+    if (task.interval.method == IntervalMethod.Day) {
+      this.daysToSkip = task.interval.num;
+      this.calcNewDueDateForSkip(this.daysToSkip);
+    }
+    //TODO: Support other methods of skipping in the UI (Months, years, regular interval...)
+    // this.saveService.completeTask(task, false);
+  }
+
+  calcNewDueDateForSkip(daysToSkip: number) {
+    if (this.skipDialogTask?.nextDueDate) {
+      this.newDueDateOnSkip = new Date(this.skipDialogTask?.nextDueDate);
+      this.newDueDateOnSkip.setDate(
+        this.newDueDateOnSkip.getDate() + daysToSkip
+      );
+    }
+  }
+
+  public skipTask(task: ITask): void {
+    if (task) {
+      this.saveService.skipTask(task, IntervalMethod.Day, this.daysToSkip);
+    }
+    this.showSkipDialog = false;
     this.buildTimelineData();
   }
 
@@ -165,7 +193,6 @@ export class TimelineComponent implements OnInit {
 
   // Ported from `http://www.voidware.com/moon_phase.htm`.
   moonPhase(year: number, month: number, day: number): string {
-    console.log(year, month, day);
     if (month < 3) {
       year--;
       month += 12;

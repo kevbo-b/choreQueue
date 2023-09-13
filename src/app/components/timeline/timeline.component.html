@@ -7,7 +7,7 @@
         <app-task-panel
           [task]="task"
           [categories]="categories"
-          (taskSkipped)="skipTask(task)"
+          (taskSkipped)="openSkipTaskPopup(task)"
           (taskCompleted)="completeTask(task)"
           (taskDeleted)="deleteTask(task)"
         ></app-task-panel>
@@ -28,10 +28,45 @@
         [task]="task"
         [due]="false"
         [categories]="categories"
-        (taskSkipped)="skipTask(task)"
+        (taskSkipped)="openSkipTaskPopup(task)"
         (taskCompleted)="completeTask(task)"
         (taskDeleted)="deleteTask(task)"
       ></app-task-panel>
     </div>
   </div>
 </div>
+
+<p-dialog
+  *ngIf="skipDialogTask"
+  header="Skipping Task: {{ skipDialogTask.title }}"
+  [(visible)]="showSkipDialog"
+  [style]="{ width: '50vw', height: '300px' }"
+  (onHide)="skipDialogTask = undefined"
+>
+  <div>
+    Days to skip:
+    <p-inputNumber
+      [(ngModel)]="daysToSkip"
+      (ngModelChange)="calcNewDueDateForSkip($event)"
+      [showButtons]="true"
+      buttonLayout="horizontal"
+      spinnerMode="horizontal"
+      inputId="integeronly"
+      mode="decimal"
+      [min]="-100"
+      [max]="100"
+      [step]="1"
+      decrementButtonClass="p-button-success"
+      incrementButtonClass="p-button-success"
+    ></p-inputNumber>
+  </div>
+  <div>
+    New Due Date: {{ newDueDateOnSkip | date }} ({{
+      newDueDateOnSkip | date : "EE"
+    }})
+  </div>
+  <div>
+    <button (click)="showSkipDialog = false">Abord</button
+    ><button (click)="skipTask(skipDialogTask)">Confirm and Move</button>
+  </div>
+</p-dialog>

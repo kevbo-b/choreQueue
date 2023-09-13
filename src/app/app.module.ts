@@ -17,6 +17,9 @@ import { CategoriesComponent } from './edit-list/categories/categories.component
 import { CategoryEditorComponent } from './edit-list/categories/category-editor/category-editor.component';
 import { MiniTaskListComponent } from './edit-list/mini-task-list/mini-task-list.component';
 import { MiniTaskSelectorComponent } from './components/mini-task-selector/mini-task-selector.component';
+import { DialogModule } from 'primeng/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @NgModule({
   declarations: [
@@ -34,7 +37,14 @@ import { MiniTaskSelectorComponent } from './components/mini-task-selector/mini-
     MiniTaskListComponent,
     MiniTaskSelectorComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, FormsModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    DialogModule,
+    BrowserAnimationsModule,
+    InputNumberModule,
+  ],
   providers: [SaveService],
   bootstrap: [AppComponent],
 })
