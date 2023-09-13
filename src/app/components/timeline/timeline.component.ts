@@ -15,7 +15,7 @@ export class TimelineComponent implements OnInit {
 
   public showSkipDialog = false;
   public skipDialogTask: ITask | undefined;
-  public daysToSkip: number = 0;
+  public daysToSkip: number = 1;
   public newDueDateOnSkip: Date = new Date();
 
   public constructor(public readonly saveService: SaveService) {}
@@ -33,10 +33,12 @@ export class TimelineComponent implements OnInit {
     this.skipDialogTask = task;
     if (task.interval.method == IntervalMethod.Day) {
       this.daysToSkip = task.interval.num;
-      this.calcNewDueDateForSkip(this.daysToSkip);
+    } else {
+      this.daysToSkip = 1;
     }
     //TODO: Support other methods of skipping in the UI (Months, years, regular interval...)
     // this.saveService.completeTask(task, false);
+    this.calcNewDueDateForSkip(this.daysToSkip);
   }
 
   calcNewDueDateForSkip(daysToSkip: number) {
