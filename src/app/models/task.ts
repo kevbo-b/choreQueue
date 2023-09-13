@@ -10,6 +10,7 @@ export interface ITask {
   addToLastDueDate: boolean;
   xp: number;
   categoryId: string;
+  timesSkipped: number;
 }
 
 export interface ICategory {

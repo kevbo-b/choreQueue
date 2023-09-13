@@ -1,4 +1,4 @@
-<h2>Tasks</h2>
+<h2>Tasks {{ moonPhaseAlt() }}</h2>
 
 <div *ngIf="existsAtLeastOneDueTask()">
   <div class="day-container" *ngFor="let day of days">
@@ -16,6 +16,8 @@
   </div>
 </div>
 <div *ngIf="!existsAtLeastOneDueTask()">No due Tasks yet.</div>
+
+<hr class="seperator" />
 
 <div class="day-container" *ngFor="let day of days">
   <div *ngIf="!isDue(day.date)" class="notDueYet">

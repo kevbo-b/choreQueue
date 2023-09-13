@@ -105,6 +105,7 @@ export class SaveService {
       taskToEdit.title = task.title;
       taskToEdit.description = task.description;
       taskToEdit.nextDueDate = task.nextDueDate;
+      taskToEdit.addToLastDueDate = task.addToLastDueDate;
       taskToEdit.interval = task.interval;
       taskToEdit.xp = task.xp;
       taskToEdit.categoryId = task.categoryId;
@@ -141,6 +142,7 @@ export class SaveService {
         task.interval.method,
         task.interval.num
       );
+      task.timesSkipped = 0;
       this._setData();
     }
   }
@@ -158,6 +160,7 @@ export class SaveService {
         amountToSkip,
         true
       );
+      task.timesSkipped++;
       this._setData();
     }
   }

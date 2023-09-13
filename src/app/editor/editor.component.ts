@@ -31,6 +31,7 @@ export class EditorComponent implements OnInit {
     addToLastDueDate: false,
     xp: 100,
     categoryId: 'default',
+    timesSkipped: 0,
   };
   public intervalMethod = IntervalMethod;
   public categories: ICategory[] = [];

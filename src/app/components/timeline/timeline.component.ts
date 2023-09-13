@@ -221,7 +221,7 @@ export class TimelineComponent implements OnInit {
 
     // Scale fraction from `0-8`.
     phase = round(totalDaysElapsed * 8);
-    if (phase >= this.moonIcons.length || phase < 0) {
+    if (phase > this.moonIcons.length || phase < 0) {
       return '';
     }
 

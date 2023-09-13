@@ -22,6 +22,9 @@
         <button (click)="deletePrompt()">delete</button>
         <span>XP: +{{ task.xp }} </span>
         <span *ngIf="due">{{ dueSinceStr(task) }}</span>
+        <span *ngIf="task.timesSkipped > 0"
+          >Skips: {{ task.timesSkipped }}</span
+        >
       </div>
     </div>
   </div>

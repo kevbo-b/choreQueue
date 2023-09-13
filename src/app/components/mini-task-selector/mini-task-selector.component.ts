@@ -82,6 +82,7 @@ export class MiniTaskSelectorComponent implements OnInit {
           num: -1,
         },
         nextDueDate: '',
+        timesSkipped: 0,
       });
     }
     this.saveService.addMiniTasksToQueue(this.selectedMiniTasks);
