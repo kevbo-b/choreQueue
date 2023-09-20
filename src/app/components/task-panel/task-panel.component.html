@@ -23,11 +23,11 @@
         <span>XP: +{{ task.xp }} </span>
         <span *ngIf="due">- {{ dueSinceStr(task) }}</span>
         <span *ngIf="task.timesSkipped > 0">
-          - Skips: {{ task.timesSkipped }}</span
+          - Moves: {{ task.timesSkipped }}</span
         >
       </div>
     </div>
   </div>
-  <div class="task-skip" (click)="taskSkipped.emit()">skip</div>
+  <div class="task-skip" (click)="taskSkipped.emit()">Move</div>
   <div class="task-complete" (click)="taskCompleted.emit()">Complete</div>
 </div>

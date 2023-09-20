@@ -1,4 +1,4 @@
-<h2>Edit Mini Tasks List</h2>
+<h2>Edit Unregular Tasks List</h2>
 
 <div class="tasksArea">
   <div
@@ -11,6 +11,7 @@
   >
     <div class="task">
       <div class="task-title-text" [innerHTML]="miniTask.title"></div>
+      XP: {{ miniTask.xp }}
     </div>
     <button class="task-delete-btn" (click)="deleteMiniTask(miniTask)">
       Delete

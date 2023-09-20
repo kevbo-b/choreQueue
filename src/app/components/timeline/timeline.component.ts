@@ -19,6 +19,8 @@ export class TimelineComponent implements OnInit {
   public daysToSkip: number = 1;
   public newDueDateOnSkip: Date = new Date();
 
+  public todaysDate: Date = new Date();
+
   public constructor(public readonly saveService: SaveService) {}
 
   ngOnInit(): void {
@@ -150,7 +152,7 @@ export class TimelineComponent implements OnInit {
   }
 
   public daysTillDueStr(date: string): string {
-    let days = this.daysTillDue(date);
+    let days = this.daysTillDue(date) - 1;
     if (days == 1) {
       return `1 day`;
     } else {

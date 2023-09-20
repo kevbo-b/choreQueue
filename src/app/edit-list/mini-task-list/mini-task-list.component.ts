@@ -44,8 +44,12 @@ export class MiniTaskListComponent implements OnInit {
 
   addMiniTask(): void {
     //validation
-    if (this.xpField < 0 || this.xpField > this.MAX_XP) {
-      alert('Error: Not saved! Wrong inputs in XP.');
+    if (
+      this.titleField == '' ||
+      this.xpField < 0 ||
+      this.xpField > this.MAX_XP
+    ) {
+      alert('Error: Not saved! Wrong inputs in Title or XP.');
     } else {
       this.saveService.addNewMiniTask({
         id: uuid(),

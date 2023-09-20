@@ -1,4 +1,8 @@
-<h2>Tasks {{ moonPhaseAlt() }}</h2>
+<h2>Due Tasks</h2>
+<h5>
+  Today, {{ todaysDate | date }} ({{ todaysDate | date : "EE" }})
+  {{ moonPhaseAlt() }}
+</h5>
 
 <div *ngIf="existsAtLeastOneDueTask()">
   <div class="day-container" *ngFor="let day of days">
@@ -40,13 +44,13 @@
 
 <p-dialog
   *ngIf="skipDialogTask"
-  header="Skipping Task: {{ skipDialogTask.title }}"
+  header="Moving Task: {{ skipDialogTask.title }}"
   [(visible)]="showSkipDialog"
   [style]="{ width: '50vw', height: '300px' }"
   (onHide)="skipDialogTask = undefined"
 >
   <div>
-    Days to skip:
+    Days to move:
     <p-inputNumber
       [(ngModel)]="daysToSkip"
       (ngModelChange)="calcNewDueDateForSkip($event)"
