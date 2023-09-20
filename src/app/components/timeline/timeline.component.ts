@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { isNumber, round } from 'lodash';
+import { IOptions, MoonMode } from 'src/app/models/options';
 import { ICategory, IDay, ITask, IntervalMethod } from 'src/app/models/task';
 import { SaveService } from 'src/app/services/save.service';
+import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
   selector: 'app-timeline',
@@ -21,7 +23,12 @@ export class TimelineComponent implements OnInit {
 
   public todaysDate: Date = new Date();
 
-  public constructor(public readonly saveService: SaveService) {}
+  private _options: IOptions | undefined;
+
+  public constructor(
+    public readonly saveService: SaveService,
+    public readonly settingsService: SettingsService
+  ) {}
 
   ngOnInit(): void {
     this.buildTimelineData();
@@ -29,6 +36,7 @@ export class TimelineComponent implements OnInit {
       this._tasks = tasks;
       this.sortByDueDate();
     });
+    this._options = this.settingsService.getOptions();
   }
 
   openSkipTaskPopup(task: ITask) {
@@ -228,6 +236,21 @@ export class TimelineComponent implements OnInit {
     }
 
     if (phase >= 8) phase = 0; // `0` and `8` are the same so turn `8` into `0`.
+
+    //return correct string based on setting
+    if (this._options) {
+      if (this._options.showMoons == MoonMode.All) {
+        return this.moonIcons[phase];
+      } else if (this._options.showMoons == MoonMode.FullMoonOnly) {
+        if (phase == 4) {
+          return this.moonIcons[phase];
+        } else {
+          return '';
+        }
+      } else if (this._options.showMoons == MoonMode.None) {
+        return '';
+      }
+    }
     return this.moonIcons[phase];
   }
 }
