@@ -189,7 +189,7 @@ export class SaveService {
     return this.convertDateToString(newDate);
   }
 
-  private convertDateToString(date: Date): string {
+  public convertDateToString(date: Date): string {
     var getYear = date.toLocaleString('default', { year: 'numeric' });
     var getMonth = date.toLocaleString('default', { month: '2-digit' });
     var getDay = date.toLocaleString('default', { day: '2-digit' });

@@ -31,12 +31,12 @@ export class TimelineComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this._options = this.settingsService.getOptions();
     this.buildTimelineData();
     this.saveService.getOnChangeSubject().subscribe((tasks) => {
       this._tasks = tasks;
       this.sortByDueDate();
     });
-    this._options = this.settingsService.getOptions();
   }
 
   openSkipTaskPopup(task: ITask) {
@@ -127,6 +127,13 @@ export class TimelineComponent implements OnInit {
       }
     }
 
+    //Add fill dates (if the setting is enabled)
+    if (this._options) {
+      if (this._options.showAllDays) {
+        this.addDaysInBetween();
+      }
+    }
+
     //Sort Days
     this.days.sort((a: IDay, b: IDay) => {
       return Date.parse(a.date) - Date.parse(b.date);
@@ -149,6 +156,31 @@ export class TimelineComponent implements OnInit {
     }
   }
 
+  private addDaysInBetween() {
+    let today = new Date();
+    const dayAmountToShow = 100;
+
+    for (let i = 0; i < dayAmountToShow; i++) {
+      var dayDate = new Date();
+      dayDate.setDate(today.getDate() + i);
+      var dayDateStr = this.saveService.convertDateToString(dayDate);
+      let dayExists = false;
+      for (let day of this.days) {
+        if (day.date == dayDateStr) {
+          dayExists = true;
+          break;
+        }
+      }
+      if (!dayExists) {
+        //add day (empty day)
+        this.days.push({
+          date: dayDateStr,
+          tasks: [],
+        });
+      }
+    }
+  }
+
   public daysTillDue(date: string): number {
     let today = new Date();
     let dateOfDay = new Date(date);
@@ -160,7 +192,7 @@ export class TimelineComponent implements OnInit {
   }
 
   public daysTillDueStr(date: string): string {
-    let days = this.daysTillDue(date) - 1;
+    let days = this.daysTillDue(date);
     if (days == 1) {
       return `1 day`;
     } else {

@@ -39,6 +39,7 @@
         (taskDeleted)="deleteTask(task)"
       ></app-task-panel>
     </div>
+    <span *ngIf="day.tasks.length == 0">No Tasks</span>
   </div>
 </div>
 
