@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   ICategory,
   ILevelProgress,
@@ -6,7 +6,7 @@ import {
   IXpChangeMessage,
   IntervalMethod,
 } from '../models/task';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
