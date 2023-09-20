@@ -7,6 +7,7 @@ import {
   IntervalMethod,
 } from '../models/task';
 import { Subject } from 'rxjs';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root',
@@ -402,5 +403,16 @@ export class SaveService {
 
   public emitOnChangesSubject(): void {
     this.onChangeSubject.next(this.allTasks);
+  }
+
+  public resetData(): void {
+    this.allTasks = [];
+    this.categories = [_.cloneDeep(this.defaultCategory)];
+    this.levelProgress = {
+      level: 1,
+      xp: 0,
+    };
+    this.miniTasks = [];
+    this._setData();
   }
 }

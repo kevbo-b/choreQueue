@@ -21,6 +21,7 @@ import { DialogModule } from 'primeng/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SettingsMenuComponent } from './settings-menu/settings-menu.component';
+import { SettingsService } from './services/settings.service';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,7 @@ import { SettingsMenuComponent } from './settings-menu/settings-menu.component';
     BrowserAnimationsModule,
     InputNumberModule,
   ],
-  providers: [SaveService],
+  providers: [SaveService, SettingsService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

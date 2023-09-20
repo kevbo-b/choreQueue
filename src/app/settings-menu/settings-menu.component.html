@@ -2,48 +2,58 @@
 
 <h1>Settings</h1>
 
-<div class="editorRow">
-  <div>
-    <h4>Show Moons of the Day</h4>
-    <input type="checkbox" />
+<div *ngIf="options">
+  <div class="editorRow">
+    <div>
+      <h4>Show Moons of the Day</h4>
+      <select [(ngModel)]="options.showMoons">
+        <option [value]="moonModes.None">None</option>
+        <option [value]="moonModes.FullMoonOnly">Only Full Moons</option>
+        <option [value]="moonModes.All">All</option>
+      </select>
+    </div>
   </div>
-</div>
 
-<div class="editorRow">
-  <div>
-    <h4>Theme</h4>
-    dark/light
+  <div class="editorRow">
+    <div>
+      <h4>Theme</h4>
+      <select [(ngModel)]="options.theme">
+        <option [value]="themes.Light">Light</option>
+        <option [value]="themes.Dark">Dark</option>
+      </select>
+    </div>
   </div>
-</div>
 
-<div class="editorRow">
-  <div>
-    <h4>Show all days, even those without tasks</h4>
-    <input type="checkbox" />
+  <div class="editorRow">
+    <div>
+      <h4>Show all days, even those without tasks</h4>
+      <input type="checkbox" [(ngModel)]="options.showAllDays" />
+    </div>
   </div>
-</div>
 
-<div class="editorRow">
-  <div>
-    <h4>Background</h4>
-    ...
+  <div class="editorRow">
+    <div>
+      <h4>Background</h4>
+      ...
+    </div>
   </div>
-</div>
 
-<div class="editorRow">
-  <button (click)="onSavePressed()">Save</button>
-</div>
-
-<div class="editorRow">
-  <div>
-    <h4>Import / Export Data</h4>
-    ...
+  <div class="editorRow">
+    <button (click)="onSavePressed()">Save</button>
   </div>
-</div>
 
-<div class="editorRow">
-  <div>
-    <h4 style="background-color: red">Clear all Data</h4>
-    ...
+  <div class="editorRow">
+    <div>
+      <h4>Import / Export Data</h4>
+      ...
+    </div>
+  </div>
+
+  <div class="editorRow">
+    <div>
+      <h4 style="background-color: red">
+        <button (click)="onClearData()">Clear All Data</button>
+      </h4>
+    </div>
   </div>
 </div>

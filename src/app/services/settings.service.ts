@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IOptions, MoonMode, Theme } from '../models/options';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root',
@@ -8,13 +9,15 @@ import { IOptions, MoonMode, Theme } from '../models/options';
 export class SettingsService {
   constructor() {}
 
-  private options: IOptions = {
+  private defaultOptions: IOptions = {
     showAllDays: false,
     showMoons: MoonMode.FullMoonOnly,
     theme: Theme.Light,
   };
+
   private optionsKey = 'optionsKey';
   private onOptionsUpdateSubject = new Subject<IOptions>();
+  private options: IOptions = _.cloneDeep(this.defaultOptions);
 
   public getOptions(): IOptions {
     this._getData();
@@ -42,5 +45,11 @@ export class SettingsService {
 
   public getOnOptionsChangeSubject(): Subject<IOptions> {
     return this.onOptionsUpdateSubject;
+  }
+
+  public resetData(): void {
+    this.options = _.cloneDeep(this.defaultOptions);
+    this._setData();
+    this.onOptionsUpdateSubject.next(this.options);
   }
 }
