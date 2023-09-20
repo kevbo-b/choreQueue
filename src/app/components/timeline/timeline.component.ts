@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { isNumber, round } from 'lodash';
 import { IOptions, MoonMode } from 'src/app/models/options';
@@ -27,7 +28,8 @@ export class TimelineComponent implements OnInit {
 
   public constructor(
     public readonly saveService: SaveService,
-    public readonly settingsService: SettingsService
+    public readonly settingsService: SettingsService,
+    public readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -218,6 +220,12 @@ export class TimelineComponent implements OnInit {
       date.getMonth() + 1,
       date.getDate()
     );
+  }
+
+  redirectToEditor(dayPreset: string): void {
+    this.router.navigate(['/edit/new'], {
+      queryParams: { redirectedFrom: 'home', dayPreset: dayPreset },
+    });
   }
 
   LUNAR_CYCLE = 29.5305882; // 29.53058770576

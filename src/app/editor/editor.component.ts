@@ -62,6 +62,9 @@ export class EditorComponent implements OnInit {
       if ('redirectedFrom' in params) {
         this.redirectedFrom = params['redirectedFrom'];
       }
+      if ('dayPreset' in params) {
+        this.task.nextDueDate = params['dayPreset'];
+      }
     });
   }
 

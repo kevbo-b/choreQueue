@@ -39,7 +39,9 @@
         (taskDeleted)="deleteTask(task)"
       ></app-task-panel>
     </div>
-    <span *ngIf="day.tasks.length == 0">No Tasks</span>
+    <span class="addNewTaskOnDay" (click)="redirectToEditor(day.date)"
+      >+ Add Task</span
+    >
   </div>
 </div>
 

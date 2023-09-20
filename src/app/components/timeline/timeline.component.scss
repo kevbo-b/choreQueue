@@ -9,3 +9,14 @@
   margin-top: 1em;
   border-top: 2px solid #bbb;
 }
+
+.addNewTaskOnDay {
+}
+.addNewTaskOnDay:hover {
+  cursor: pointer;
+  background-color: #bbb;
+}
+.addNewTaskOnDay:active {
+  cursor: pointer;
+  background-color: aquamarine;
+}
