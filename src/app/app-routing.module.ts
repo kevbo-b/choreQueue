@@ -7,6 +7,7 @@ import { EditListComponent } from './edit-list/edit-list.component';
 import { CategoriesComponent } from './edit-list/categories/categories.component';
 import { CategoryEditorComponent } from './edit-list/categories/category-editor/category-editor.component';
 import { MiniTaskListComponent } from './edit-list/mini-task-list/mini-task-list.component';
+import { SettingsMenuComponent } from './settings-menu/settings-menu.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,10 @@ const routes: Routes = [
   {
     path: 'miniTasks',
     component: MiniTaskListComponent,
+  },
+  {
+    path: 'settings',
+    component: SettingsMenuComponent
   },
   { path: '**', component: HomeComponent },
 ];

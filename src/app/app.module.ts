@@ -20,6 +20,7 @@ import { MiniTaskSelectorComponent } from './components/mini-task-selector/mini-
 import { DialogModule } from 'primeng/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { SettingsMenuComponent } from './settings-menu/settings-menu.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
     CategoryEditorComponent,
     MiniTaskListComponent,
     MiniTaskSelectorComponent,
+    SettingsMenuComponent,
   ],
   imports: [
     BrowserModule,
