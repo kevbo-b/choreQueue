@@ -1,5 +1,5 @@
-<h2>Due Tasks</h2>
-<h5>
+<h2 class="readable">Due Tasks</h2>
+<h5 class="readable">
   Today, {{ todaysDate | date }} ({{ todaysDate | date : "EE" }})
   {{ moonPhaseAlt() }}
 </h5>
@@ -19,13 +19,13 @@
     </div>
   </div>
 </div>
-<div *ngIf="!existsAtLeastOneDueTask()">No due Tasks yet.</div>
+<div *ngIf="!existsAtLeastOneDueTask()" class="readable">No due Tasks yet.</div>
 
 <hr class="seperator" />
 
 <div class="day-container" *ngFor="let day of days">
   <div *ngIf="!isDue(day.date)" class="notDueYet">
-    <h2>
+    <h2 class="readable">
       {{ day.date | date }} ({{ day.date | date : "EE" }}) (in
       {{ daysTillDueStr(day.date) }}) {{ getMoonIcon(day.date) }}
     </h2>
@@ -39,7 +39,7 @@
         (taskDeleted)="deleteTask(task)"
       ></app-task-panel>
     </div>
-    <span class="addNewTaskOnDay" (click)="redirectToEditor(day.date)"
+    <span class="addNewTaskOnDay readable" (click)="redirectToEditor(day.date)"
       >+ Add Task</span
     >
   </div>
@@ -49,7 +49,7 @@
   *ngIf="skipDialogTask"
   header="Moving Task: {{ skipDialogTask.title }}"
   [(visible)]="showSkipDialog"
-  [style]="{ width: '50vw', height: '300px' }"
+  [style]="{ width: '100vw' }"
   (onHide)="skipDialogTask = undefined"
 >
   <div>

@@ -13,12 +13,16 @@
   <div class="task-container">
     <input [(ngModel)]="customMiniTaskChecked" type="checkbox" />
     <input
+      pInputText
       [disabled]="!customMiniTaskChecked"
       [(ngModel)]="customMiniTaskText"
       type="text"
+      [style]="{ width: '60vw' }"
       placeholder="title"
     />
     <input
+      pInputText
+      [style]="{ width: '15vw' }"
       [disabled]="!customMiniTaskChecked"
       [(ngModel)]="customMiniTaskXP"
       type="number"

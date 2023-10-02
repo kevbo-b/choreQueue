@@ -29,7 +29,7 @@ export class SaveService {
   private defaultCategory: ICategory = {
     id: 'default',
     name: 'Default',
-    color: '#4444BB9a',
+    color: '#4444BBFF',
     priorityPlace: 0,
     hidden: false,
   };

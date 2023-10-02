@@ -14,10 +14,10 @@ export class XpProgressBarComponent implements OnInit {
   ngOnInit(): void {
     this.progress = this.saveService.getCurrentLevelProgressPercentage();
     this.saveService.getLevelSubject().subscribe((xpChange) => {
-      this.progress = xpChange.progressPercentage;
       if (xpChange.isNewLevel) {
         //TODO: special animation etc.
       }
+      this.progress = xpChange.progressPercentage;
     });
   }
 }
