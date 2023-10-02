@@ -23,6 +23,7 @@ export class CategoryEditorComponent {
     color: '',
     name: '',
     priorityPlace: -1,
+    hidden: false,
   };
   color: string = '';
   opacity: number = 255;

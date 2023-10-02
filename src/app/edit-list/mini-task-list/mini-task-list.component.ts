@@ -64,6 +64,7 @@ export class MiniTaskListComponent implements OnInit {
         },
         nextDueDate: '',
         timesSkipped: 0,
+        hidden: false,
       });
       this.titleField = '';
       this.getData();

@@ -32,6 +32,7 @@ export class EditorComponent implements OnInit {
     xp: 100,
     categoryId: 'default',
     timesSkipped: 0,
+    hidden: false,
   };
   public intervalMethod = IntervalMethod;
   public categories: ICategory[] = [];

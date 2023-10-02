@@ -6,7 +6,7 @@
 <div class="editorRow">
   <div>
     <h4>Title</h4>
-    <input [(ngModel)]="task.title" />
+    <input pInputText [(ngModel)]="task.title" />
   </div>
 
   <div>
@@ -48,18 +48,30 @@
       type="checkbox"
       [(ngModel)]="task.addToLastDueDate"
     />
-    <label [ariaDisabled]="">Follow interval strictly (fixed Dates)</label>
+    <label [ariaDisabled]=""
+      >Follow interval strictly (fixed Dates) [EXPERIMENTAL!]</label
+    >
   </div>
 </div>
 
 <div class="editorRow">
   <div>
     <h4>XP Reward</h4>
-    <input [(ngModel)]="task.xp" type="number" min="0" max="{{ MAX_XP }}" />
+    <input
+      pInputText
+      [(ngModel)]="task.xp"
+      type="number"
+      min="0"
+      max="{{ MAX_XP }}"
+    />
   </div>
 </div>
 
 <h4>Description</h4>
-<textarea [(ngModel)]="task.description" rows="4" cols="80"> </textarea>
+<textarea
+  [(ngModel)]="task.description"
+  rows="4"
+  [ngStyle]="{ width: 100 }"
+></textarea>
 
 <button (click)="onSavePressed()">Save</button>

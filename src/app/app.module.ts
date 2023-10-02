@@ -22,6 +22,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SettingsMenuComponent } from './settings-menu/settings-menu.component';
 import { SettingsService } from './services/settings.service';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { SettingsService } from './services/settings.service';
     DialogModule,
     BrowserAnimationsModule,
     InputNumberModule,
+    InputTextModule,
   ],
   providers: [SaveService, SettingsService],
   bootstrap: [AppComponent],

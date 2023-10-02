@@ -11,6 +11,7 @@ export interface ITask {
   xp: number;
   categoryId: string;
   timesSkipped: number;
+  hidden: boolean;
 }
 
 export interface ICategory {
@@ -18,6 +19,7 @@ export interface ICategory {
   name: string;
   color: string;
   priorityPlace: number;
+  hidden: boolean;
 }
 
 export enum IntervalMethod {
