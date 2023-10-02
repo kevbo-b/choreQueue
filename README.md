@@ -15,7 +15,8 @@ To build an Android APK, make sure to have Android Studio installed on your syst
 
 - npm run build
 - npx cap add android (adds android project - if android folder exists already, delete it for a fresh build)
-  - can also try "npx cap copy" to update if an android folder exists already
+  - can also try "npx cap copy" instead to update if an android folder exists already
+- optional: configure permissions and more for Android in android/app/src/main/AndroidManifest.xml
 - npx cap open android
 - build APK through standard Android Studio workflow (Build / build APK)
 - install, via ADB for example: adb install app-debug.apk
@@ -31,4 +32,5 @@ Now you can access the App on your Smartphone-Browser under: DEVICEIP:4200
 (Replace DEVICEIP with the IP of your host-system.)
 
 Its also possible to use live reloading within the native app on your phone.
-For this, read the comment in the .server attribute in capacitor.config.ts. (Only have to generate this live-reload App once)
+For this, read the comment in the .server attribute in capacitor.config.ts.
+Then generate a live-reloading version of the app though another Android deployment as explained above. (You have to generate this live-reload App once - keep permission in mind though)

@@ -8,6 +8,7 @@ import {
 } from '../models/task';
 import { Subject } from 'rxjs';
 import * as _ from 'lodash';
+import { IConfigDataTransfer } from '../models/options';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +31,7 @@ export class SaveService {
     name: 'Default',
     color: '#4444BB9a',
     priorityPlace: 0,
+    hidden: false,
   };
   private categoriesKey = 'taskCategories';
 
@@ -413,6 +415,14 @@ export class SaveService {
       xp: 0,
     };
     this.miniTasks = [];
+    this._setData();
+  }
+
+  //import
+  public importData(data: IConfigDataTransfer): void {
+    this.allTasks = data.tasks;
+    this.categories = data.categories;
+    this.levelProgress = data.level;
     this._setData();
   }
 }

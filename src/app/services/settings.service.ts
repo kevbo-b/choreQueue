@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { IOptions, MoonMode, Theme } from '../models/options';
+import {
+  IConfigDataTransfer,
+  IOptions,
+  MoonMode,
+  Theme,
+} from '../models/options';
 import * as _ from 'lodash';
 
 @Injectable({
@@ -49,6 +54,13 @@ export class SettingsService {
 
   public resetData(): void {
     this.options = _.cloneDeep(this.defaultOptions);
+    this._setData();
+    this.onOptionsUpdateSubject.next(this.options);
+  }
+
+  //import
+  public importData(data: IConfigDataTransfer): void {
+    this.options = data.settings;
     this._setData();
     this.onOptionsUpdateSubject.next(this.options);
   }

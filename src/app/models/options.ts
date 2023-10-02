@@ -1,3 +1,5 @@
+import { ICategory, ILevelProgress, ITask } from './task';
+
 export interface IOptions {
   showMoons: MoonMode;
   theme: Theme;
@@ -14,4 +16,11 @@ export enum MoonMode {
 export enum Theme {
   Light,
   Dark,
+}
+
+export interface IConfigDataTransfer {
+  tasks: ITask[];
+  categories: ICategory[];
+  level: ILevelProgress;
+  settings: IOptions;
 }

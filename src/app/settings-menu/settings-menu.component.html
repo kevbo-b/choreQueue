@@ -45,7 +45,18 @@
   <div class="editorRow">
     <div>
       <h4>Import / Export Data</h4>
-      ...
+
+      <button (click)="exportData()">Export</button>
+
+      <button (click)="importClicked()">Import</button>
+
+      <input
+        #fileImportElement
+        type="file"
+        (change)="importApplicationData($event)"
+        [hidden]="true"
+        accept=".json"
+      />
     </div>
   </div>
 
