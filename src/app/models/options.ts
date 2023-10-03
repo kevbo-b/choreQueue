@@ -21,6 +21,7 @@ export enum Theme {
 export interface IConfigDataTransfer {
   tasks: ITask[];
   categories: ICategory[];
+  miniTasks: ITask[];
   level: ILevelProgress;
   settings: IOptions;
 }

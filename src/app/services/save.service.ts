@@ -422,6 +422,7 @@ export class SaveService {
   public importData(data: IConfigDataTransfer): void {
     this.allTasks = data.tasks;
     this.categories = data.categories;
+    this.miniTasks = data.miniTasks;
     this.levelProgress = data.level;
     this._setData();
   }

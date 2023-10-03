@@ -57,6 +57,7 @@ export class SettingsMenuComponent implements OnInit {
     let dataExport: IConfigDataTransfer = {
       tasks: this.saveService.getAllTasks(),
       categories: this.saveService.getAllCategories(),
+      miniTasks: this.saveService.getAllMiniTasks(),
       level: this.saveService.getLevelProgress(),
       settings: this.settingsService.getOptions(),
     };
@@ -133,7 +134,8 @@ export class SettingsMenuComponent implements OnInit {
       object.tasks &&
       object.categories &&
       object.level &&
-      object.settings
+      object.settings &&
+      object.miniTasks
     );
   }
 }
