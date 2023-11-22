@@ -54,20 +54,28 @@
 >
   <div>
     Days to move:
-    <p-inputNumber
-      [(ngModel)]="daysToSkip"
-      (ngModelChange)="calcNewDueDateForSkip($event)"
-      [showButtons]="true"
-      buttonLayout="horizontal"
-      spinnerMode="horizontal"
-      inputId="integeronly"
-      mode="decimal"
-      [min]="-100"
-      [max]="100"
-      [step]="1"
-      decrementButtonClass="p-button-success"
-      incrementButtonClass="p-button-success"
-    ></p-inputNumber>
+    <div>
+      <p-button
+        (click)="daysToSkip = daysToSkip - 1; calcNewDueDateForSkip(daysToSkip)"
+        >-</p-button
+      >
+      <p-inputNumber
+        [(ngModel)]="daysToSkip"
+        (ngModelChange)="calcNewDueDateForSkip($event)"
+        buttonLayout="horizontal"
+        spinnerMode="horizontal"
+        inputId="integeronly"
+        mode="decimal"
+        [min]="-100"
+        [max]="100"
+        [step]="1"
+        (click)="selectValue($event)"
+      ></p-inputNumber>
+      <p-button
+        (click)="daysToSkip = daysToSkip + 1; calcNewDueDateForSkip(daysToSkip)"
+        >+</p-button
+      >
+    </div>
   </div>
   <div>
     New Due Date: {{ newDueDateOnSkip | date }} ({{

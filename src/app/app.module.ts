@@ -23,6 +23,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SettingsMenuComponent } from './settings-menu/settings-menu.component';
 import { SettingsService } from './services/settings.service';
 import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { InputTextModule } from 'primeng/inputtext';
     BrowserAnimationsModule,
     InputNumberModule,
     InputTextModule,
+    ButtonModule,
   ],
   providers: [SaveService, SettingsService],
   bootstrap: [AppComponent],

@@ -101,6 +101,12 @@ export class TimelineComponent implements OnInit {
     return false;
   }
 
+  public selectValue(mouseEvent: MouseEvent): void {
+    if (mouseEvent.target && (mouseEvent.target as HTMLInputElement).select) {
+      (mouseEvent.target as HTMLInputElement).select();
+    }
+  }
+
   private buildTimelineData() {
     this._tasks = this.saveService.getAllTasks();
     this.categories = this.saveService.getAllCategories();
