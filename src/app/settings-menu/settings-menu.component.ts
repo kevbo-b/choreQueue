@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { SettingsService } from '../services/settings.service';
 import {
+  DueTasksSortMode,
   IConfigDataTransfer,
   IOptions,
   MoonMode,
@@ -27,6 +28,7 @@ export class SettingsMenuComponent implements OnInit {
 
   public moonModes = MoonMode;
   public themes = Theme;
+  public dueSortMode = DueTasksSortMode;
 
   ngOnInit(): void {
     this.options = this.settingsService.getOptions();
@@ -67,9 +69,9 @@ export class SettingsMenuComponent implements OnInit {
       new Date().getHours() +
       '-' +
       new Date().getMinutes();
-    let filename = `Task queue - ${dateStr}.json`;
-    //platform wise distinction
     let platform = Capacitor.getPlatform();
+    let filename = `Task queue ${platform} - ${dateStr}.json`;
+    //platform wise distinction
     if (platform == 'web') {
       //Browser
       var element = document.createElement('a');

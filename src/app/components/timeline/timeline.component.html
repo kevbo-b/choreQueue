@@ -4,45 +4,39 @@
   {{ moonPhaseAlt() }}
 </h5>
 
-<div *ngIf="existsAtLeastOneDueTask()">
-  <div class="day-container" *ngFor="let day of days">
-    <div *ngIf="isDue(day.date)" class="dueDay">
-      <div class="task-container" *ngFor="let task of day.tasks">
-        <app-task-panel
-          [task]="task"
-          [categories]="categories"
-          (taskSkipped)="openSkipTaskPopup(task)"
-          (taskCompleted)="completeTask(task)"
-          (taskDeleted)="deleteTask(task)"
-        ></app-task-panel>
-      </div>
-    </div>
+<div *ngIf="dueTasks.length > 0" class="day-container dueDay">
+  <div *ngFor="let task of dueTasks" class="task-container">
+    <app-task-panel
+      [task]="task"
+      [categories]="categories"
+      (taskSkipped)="openSkipTaskPopup(task)"
+      (taskCompleted)="completeTask(task)"
+      (taskDeleted)="deleteTask(task)"
+    ></app-task-panel>
   </div>
 </div>
-<div *ngIf="!existsAtLeastOneDueTask()" class="readable">No due Tasks yet.</div>
+<div *ngIf="dueTasks.length === 0" class="readable">No due Tasks yet.</div>
 
 <hr class="seperator" />
 
-<div class="day-container" *ngFor="let day of days">
-  <div *ngIf="!isDue(day.date)" class="notDueYet">
-    <h2 class="readable">
-      {{ day.date | date }} ({{ day.date | date : "EE" }}) (in
-      {{ daysTillDueStr(day.date) }}) {{ getMoonIcon(day.date) }}
-    </h2>
-    <div class="task-container" *ngFor="let task of day.tasks">
-      <app-task-panel
-        [task]="task"
-        [due]="false"
-        [categories]="categories"
-        (taskSkipped)="openSkipTaskPopup(task)"
-        (taskCompleted)="completeTask(task)"
-        (taskDeleted)="deleteTask(task)"
-      ></app-task-panel>
-    </div>
-    <span class="addNewTaskOnDay readable" (click)="redirectToEditor(day.date)"
-      >+ Add Task</span
-    >
+<div *ngFor="let task of futureDays" class="day-container notDueYet">
+  <h2 class="readable">
+    {{ task.date | date }} ({{ task.date | date : "EE" }}) (in
+    {{ daysTillDueStr(task.date) }}) {{ getMoonIcon(task.date) }}
+  </h2>
+  <div class="task-container" *ngFor="let task of task.tasks">
+    <app-task-panel
+      [task]="task"
+      [due]="false"
+      [categories]="categories"
+      (taskSkipped)="openSkipTaskPopup(task)"
+      (taskCompleted)="completeTask(task)"
+      (taskDeleted)="deleteTask(task)"
+    ></app-task-panel>
   </div>
+  <span class="addNewTaskOnDay readable" (click)="redirectToEditor(task.date)"
+    >+ Add Task</span
+  >
 </div>
 
 <p-dialog

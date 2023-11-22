@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { isNumber, round } from 'lodash';
-import { IOptions, MoonMode } from 'src/app/models/options';
+import { DueTasksSortMode, IOptions, MoonMode } from 'src/app/models/options';
 import { ICategory, IDay, ITask, IntervalMethod } from 'src/app/models/task';
 import { SaveService } from 'src/app/services/save.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -14,7 +14,6 @@ import { SettingsService } from 'src/app/services/settings.service';
 })
 export class TimelineComponent implements OnInit {
   private _tasks: ITask[] = [];
-  public days: IDay[] = [];
   public categories: ICategory[] = [];
 
   public showSkipDialog = false;
@@ -26,6 +25,11 @@ export class TimelineComponent implements OnInit {
 
   private _options: IOptions | undefined;
 
+  private _dueSortMode = DueTasksSortMode;
+
+  public dueTasks: ITask[] = [];
+  public futureDays: IDay[] = [];
+
   public constructor(
     public readonly saveService: SaveService,
     public readonly settingsService: SettingsService,
@@ -36,8 +40,7 @@ export class TimelineComponent implements OnInit {
     this._options = this.settingsService.getOptions();
     this.buildTimelineData();
     this.saveService.getOnChangeSubject().subscribe((tasks) => {
-      this._tasks = tasks;
-      this.sortByDueDate();
+      this.buildTimelineData(tasks);
     });
   }
 
@@ -90,35 +93,50 @@ export class TimelineComponent implements OnInit {
     return false;
   }
 
-  public existsAtLeastOneDueTask() {
-    for (let day of this.days) {
-      for (let task of day.tasks) {
-        if (this.isDue(task.nextDueDate)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   public selectValue(mouseEvent: MouseEvent): void {
     if (mouseEvent.target && (mouseEvent.target as HTMLInputElement).select) {
       (mouseEvent.target as HTMLInputElement).select();
     }
   }
 
-  private buildTimelineData() {
-    this._tasks = this.saveService.getAllTasks();
-    this.categories = this.saveService.getAllCategories();
-    this.sortByDueDate();
+  private buildTimelineData(tasks?: ITask[]) {
+    if (tasks) {
+      this._tasks = tasks;
+    } else {
+      this._tasks = this.saveService.getAllTasks();
+      this.categories = this.saveService.getAllCategories();
+    }
+    //divide: get due tasks and not due tasks
+    this.dueTasks = _.cloneDeep(this.getDueTasks(this._tasks));
+    this.futureDays = _.cloneDeep(this.getFutureDays(this._tasks));
+    //sort them
+    this.sortData();
   }
 
-  private sortByDueDate(): void {
-    this.days = [];
+  private getDueTasks(tasks: ITask[]): ITask[] {
+    let dueTasks: ITask[] = [];
+    for (let task of tasks) {
+      if (this.isDue(task.nextDueDate)) {
+        dueTasks.push(task);
+      }
+    }
+    return dueTasks;
+  }
+
+  private getFutureDays(allTasks: ITask[]): IDay[] {
+    let futureTasks: ITask[] = [];
+    for (let task of allTasks) {
+      if (!this.isDue(task.nextDueDate)) {
+        futureTasks.push(task);
+      }
+    }
+
+    let days: IDay[] = [];
+
     //Group Tasks by Day
-    for (let task of this._tasks) {
+    for (let task of futureTasks) {
       let addNew = true;
-      for (let day of this.days) {
+      for (let day of days) {
         //Add Task to existing day
         if (day.date === task.nextDueDate) {
           day.tasks.push(task);
@@ -128,7 +146,7 @@ export class TimelineComponent implements OnInit {
       }
       //Add new Day
       if (addNew) {
-        this.days.push({
+        days.push({
           date: task.nextDueDate,
           tasks: [task],
         });
@@ -138,33 +156,50 @@ export class TimelineComponent implements OnInit {
     //Add fill dates (if the setting is enabled)
     if (this._options) {
       if (this._options.showAllDays) {
-        this.addDaysInBetween();
+        days = this.addDaysInBetween(days);
       }
     }
 
-    //Sort Days
-    this.days.sort((a: IDay, b: IDay) => {
+    return days;
+  }
+
+  private sortData(): void {
+    //Sort Future Days
+    this.futureDays.sort((a: IDay, b: IDay) => {
       return Date.parse(a.date) - Date.parse(b.date);
     });
 
-    //Sort Tasks by Categories within days
-    for (let day of this.days) {
-      day.tasks.sort((a: ITask, b: ITask) => {
-        let priorityA = this.saveService.getCategoryById(a.categoryId)
-          ?.priorityPlace as number;
-        let priorityB = this.saveService.getCategoryById(b.categoryId)
-          ?.priorityPlace as number;
-
-        if (priorityA > priorityB) {
-          return 1;
-        } else {
-          return -1;
-        }
+    //Sort Tasks within days (due Tasks and open tasks)
+    if (this._options?.dueTasksSortMode == this._dueSortMode.Category) {
+      this.dueTasks = this.sortTasksByCategory(this.dueTasks);
+    } else {
+      //sorts by due duration
+      this.dueTasks.sort((a: ITask, b: ITask) => {
+        return Date.parse(a.nextDueDate) - Date.parse(b.nextDueDate);
       });
+    }
+    for (let futureDay of this.futureDays) {
+      futureDay.tasks = this.sortTasksByCategory(futureDay.tasks);
     }
   }
 
-  private addDaysInBetween() {
+  private sortTasksByCategory(tasks: ITask[]): ITask[] {
+    tasks.sort((a: ITask, b: ITask) => {
+      let priorityA = this.saveService.getCategoryById(a.categoryId)
+        ?.priorityPlace as number;
+      let priorityB = this.saveService.getCategoryById(b.categoryId)
+        ?.priorityPlace as number;
+
+      if (priorityA > priorityB) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    return tasks;
+  }
+
+  private addDaysInBetween(days: IDay[]): IDay[] {
     let today = new Date();
     const dayAmountToShow = 100;
 
@@ -173,7 +208,7 @@ export class TimelineComponent implements OnInit {
       dayDate.setDate(today.getDate() + i);
       var dayDateStr = this.saveService.convertDateToString(dayDate);
       let dayExists = false;
-      for (let day of this.days) {
+      for (let day of days) {
         if (day.date == dayDateStr) {
           dayExists = true;
           break;
@@ -181,12 +216,14 @@ export class TimelineComponent implements OnInit {
       }
       if (!dayExists) {
         //add day (empty day)
-        this.days.push({
+        days.push({
           date: dayDateStr,
           tasks: [],
         });
       }
     }
+
+    return days;
   }
 
   public daysTillDue(date: string): number {

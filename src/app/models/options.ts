@@ -5,6 +5,7 @@ export interface IOptions {
   theme: Theme;
   showAllDays: boolean;
   background?: string;
+  dueTasksSortMode: DueTasksSortMode;
 }
 
 export enum MoonMode {
@@ -16,6 +17,11 @@ export enum MoonMode {
 export enum Theme {
   Light,
   Dark,
+}
+
+export enum DueTasksSortMode {
+  Category,
+  DueDuration,
 }
 
 export interface IConfigDataTransfer {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import {
+  DueTasksSortMode,
   IConfigDataTransfer,
   IOptions,
   MoonMode,
@@ -18,6 +19,7 @@ export class SettingsService {
     showAllDays: false,
     showMoons: MoonMode.FullMoonOnly,
     theme: Theme.Light,
+    dueTasksSortMode: DueTasksSortMode.Category,
   };
 
   private optionsKey = 'optionsKey';

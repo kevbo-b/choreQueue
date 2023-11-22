@@ -33,6 +33,17 @@
 
   <div class="editorRow">
     <div>
+      <h4>Sort Mode for due tasks</h4>
+      Sort first by...
+      <select [(ngModel)]="options.dueTasksSortMode">
+        <option [value]="dueSortMode.DueDuration">Duration</option>
+        <option [value]="dueSortMode.Category">Category</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="editorRow">
+    <div>
       <h4>Background</h4>
       ...
     </div>
