@@ -1,4 +1,16 @@
-<div><button (click)="onBackPressed()">Back</button></div>
+<div class="backAndSave">
+  <p-button
+    label="Back"
+    icon="pi pi-arrow-left"
+    (onClick)="onBackPressed()"
+  ></p-button>
+  <p-button
+    label="Save"
+    icon="pi pi-save"
+    iconPos="right"
+    (onClick)="onSavePressed()"
+  ></p-button>
+</div>
 
 <h1 *ngIf="createNew">Create New Task</h1>
 <h1 *ngIf="!createNew">Edit Task</h1>
@@ -73,5 +85,3 @@
   rows="4"
   [ngStyle]="{ width: 100 }"
 ></textarea>
-
-<button (click)="onSavePressed()">Save</button>
