@@ -24,6 +24,7 @@ import { SettingsMenuComponent } from './settings-menu/settings-menu.component';
 import { SettingsService } from './services/settings.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { HistoryComponent } from './level/history/history.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { ButtonModule } from 'primeng/button';
     MiniTaskListComponent,
     MiniTaskSelectorComponent,
     SettingsMenuComponent,
+    HistoryComponent,
   ],
   imports: [
     BrowserModule,

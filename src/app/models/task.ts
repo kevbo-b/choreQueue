@@ -43,3 +43,17 @@ export interface IXpChangeMessage {
   progressPercentage: number;
   isNewLevel: boolean;
 }
+
+export interface IHistoryEntry {
+  taskId: string;
+  date: string;
+  action: ITimelineAction;
+  objectBeforeAction?: ITask;
+  xpGain?: number;
+}
+
+export enum ITimelineAction {
+  Complete,
+  Delete,
+  Move,
+}

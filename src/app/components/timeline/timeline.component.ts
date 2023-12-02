@@ -271,6 +271,10 @@ export class TimelineComponent implements OnInit {
     });
   }
 
+  public undoAction(): void {
+    this.saveService.undoHistoryAction();
+  }
+
   LUNAR_CYCLE = 29.5305882; // 29.53058770576
   DAYS_PER_YEAR = 365.25;
   DAYS_PER_MONTH = 30.6;

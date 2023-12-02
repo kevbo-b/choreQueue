@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import {
   ICategory,
+  IHistoryEntry,
   ILevelProgress,
   ITask,
+  ITimelineAction,
   IXpChangeMessage,
   IntervalMethod,
 } from '../models/task';
@@ -37,6 +39,9 @@ export class SaveService {
 
   private miniTasks: ITask[] = [];
   private miniTasksKey: string = 'miniTasks';
+
+  private history: IHistoryEntry[] = [];
+  private historyKey: string = 'history';
 
   private levelSubject = new Subject<IXpChangeMessage>();
 
@@ -75,6 +80,13 @@ export class SaveService {
     if (miniTasks && miniTasks.length > 0) {
       this.miniTasks = miniTasks;
     }
+    //history
+    let history = JSON.parse(
+      localStorage.getItem(this.historyKey) as string
+    ) as unknown as IHistoryEntry[];
+    if (history && history.length > 0) {
+      this.history = history;
+    }
   }
 
   private _setData() {
@@ -85,6 +97,7 @@ export class SaveService {
     );
     localStorage.setItem(this.categoriesKey, JSON.stringify(this.categories));
     localStorage.setItem(this.miniTasksKey, JSON.stringify(this.miniTasks));
+    localStorage.setItem(this.historyKey, JSON.stringify(this.history));
   }
 
   public getTaskById(id: string): ITask | undefined {
@@ -119,6 +132,7 @@ export class SaveService {
   public deleteTask(task: ITask): void {
     let taskToEdit = this.getTaskById(task.id);
     if (taskToEdit) {
+      this.saveToHistory(taskToEdit, ITimelineAction.Delete);
       let index = this.allTasks.indexOf(taskToEdit, 0);
       if (index > -1) {
         this.allTasks.splice(index, 1);
@@ -135,6 +149,7 @@ export class SaveService {
   public completeTask(inputtedTask: ITask): void {
     var task = this.getTaskById(inputtedTask.id);
     if (task) {
+      this.saveToHistory(task, ITimelineAction.Complete);
       this.addXP(inputtedTask.xp);
       if (task.interval.method == IntervalMethod.NeverRepeat) {
         this.deleteTask(task);
@@ -157,6 +172,7 @@ export class SaveService {
   ): void {
     var task = this.getTaskById(inputtedTask.id);
     if (task) {
+      this.saveToHistory(task, ITimelineAction.Move);
       task.nextDueDate = this.setNextDueDate(
         inputtedTask,
         intervalMethod,
@@ -204,8 +220,6 @@ export class SaveService {
     this._getData();
     return this.levelProgress;
   }
-
-  levelXP = [];
 
   /*
    * Adds XP to the Leveling Progress.
@@ -425,5 +439,58 @@ export class SaveService {
     this.miniTasks = data.miniTasks;
     this.levelProgress = data.level;
     this._setData();
+  }
+
+  private saveToHistory(task: ITask, action: ITimelineAction) {
+    let newHistoryEntry: IHistoryEntry = {
+      taskId: task.id,
+      date: this.convertDateToString(new Date()),
+      action: action,
+      objectBeforeAction: _.cloneDeep(task),
+    };
+    if (action === ITimelineAction.Complete) {
+      newHistoryEntry.xpGain = task.xp;
+    }
+    this.history.push(newHistoryEntry);
+  }
+
+  public getHistory(): IHistoryEntry[] {
+    this._getData();
+    return this.history;
+  }
+
+  public undoHistoryAction(): void {
+    let historyEntry = this.history.pop();
+    this._setData();
+    if (historyEntry) {
+      const task = this.getTaskById(historyEntry.taskId);
+      if (historyEntry.action === ITimelineAction.Complete && task) {
+        let taskIndex = this.allTasks.indexOf(task);
+        if (this.allTasks[taskIndex] && historyEntry.objectBeforeAction) {
+          this.allTasks[taskIndex] = historyEntry.objectBeforeAction;
+          //reverse level
+          this.levelProgress.xp =
+            this.levelProgress.xp - this.allTasks[taskIndex].xp;
+          while (this.levelProgress.xp < 0) {
+            this.levelProgress.level = this.levelProgress.level - 1;
+            this.levelProgress.xp =
+              this.levelProgress.xp + this.getLevelXP(this.levelProgress.level);
+          }
+        }
+      } else if (historyEntry.action === ITimelineAction.Move && task) {
+        let taskIndex = this.allTasks.indexOf(task);
+        if (this.allTasks[taskIndex] && historyEntry.objectBeforeAction) {
+          this.allTasks[taskIndex] = historyEntry.objectBeforeAction;
+        }
+      } else if (historyEntry.action === ITimelineAction.Delete) {
+        if (historyEntry.objectBeforeAction) {
+          this.addNewTask(historyEntry.objectBeforeAction);
+        }
+      }
+      console.log(this.history);
+      this._setData();
+      this.emitOnChangesSubject();
+      this._emitLevelingProgress(false);
+    }
   }
 }
