@@ -47,6 +47,9 @@ export class SaveService {
 
   private onChangeSubject = new Subject<ITask[]>();
 
+  private isFrozen = false;
+  private isFrozenKey: string = 'freezeState';
+
   private _getData() {
     //tasks
     if (this.allTasks.length == 0) {
@@ -87,6 +90,15 @@ export class SaveService {
     if (history && history.length > 0) {
       this.history = history;
     }
+    //freeze
+    let isFrozen = JSON.parse(
+      localStorage.getItem(this.isFrozenKey) as string
+    ) as unknown as boolean;
+    if (isFrozen) {
+      this.isFrozen = isFrozen;
+    } else {
+      this.isFrozen = false;
+    }
   }
 
   private _setData() {
@@ -98,6 +110,7 @@ export class SaveService {
     localStorage.setItem(this.categoriesKey, JSON.stringify(this.categories));
     localStorage.setItem(this.miniTasksKey, JSON.stringify(this.miniTasks));
     localStorage.setItem(this.historyKey, JSON.stringify(this.history));
+    localStorage.setItem(this.isFrozenKey, JSON.stringify(this.isFrozen));
   }
 
   public getTaskById(id: string): ITask | undefined {
@@ -111,6 +124,7 @@ export class SaveService {
   }
 
   public addNewTask(task: ITask): void {
+    this._handleFreezeCalculation(task);
     this.allTasks.push(task);
     this._setData();
   }
@@ -126,6 +140,7 @@ export class SaveService {
       taskToEdit.xp = task.xp;
       taskToEdit.categoryId = task.categoryId;
     }
+    this._handleFreezeCalculation(task);
     this._setData();
   }
 
@@ -146,6 +161,17 @@ export class SaveService {
     return this.allTasks;
   }
 
+  //Same as getAllTasks. Just the nextDueDate is already adjusted to the freezing. Recommended to use
+  public getAllTasksForDisplay(): ITask[] {
+    this._getData();
+    let allTaskClone = _.cloneDeep(this.allTasks);
+    //modify nextDueDate to show the date relative to the freeze date. So components dont have to handle this individually
+    for (let task of allTaskClone) {
+      task.nextDueDate = this.getFreezeShowDate(task);
+    }
+    return this.allTasks;
+  }
+
   public completeTask(inputtedTask: ITask): void {
     var task = this.getTaskById(inputtedTask.id);
     if (task) {
@@ -161,7 +187,15 @@ export class SaveService {
         task.interval.num
       );
       task.timesSkipped = 0;
+      this._handleFreezeCalculation(task);
       this._setData();
+    }
+  }
+
+  private _handleFreezeCalculation(task: ITask) {
+    if (this.isFrozen) {
+      //set freeze date to today
+      task.freezeDate = this.convertDateToString(new Date());
     }
   }
 
@@ -180,6 +214,7 @@ export class SaveService {
         true
       );
       task.timesSkipped++;
+      this._handleFreezeCalculation(task);
       this._setData();
     }
   }
@@ -487,10 +522,69 @@ export class SaveService {
           this.addNewTask(historyEntry.objectBeforeAction);
         }
       }
-      console.log(this.history);
       this._setData();
       this.emitOnChangesSubject();
       this._emitLevelingProgress(false);
     }
   }
+
+  public activateFreeze(): void {
+    this._getData();
+    const today = this.convertDateToString(new Date());
+    for (const task of this.allTasks) {
+      if (task.addToLastDueDate) {
+        //... disregard?
+      } else {
+        task.freezeDate = today;
+      }
+    }
+    this.isFrozen = true;
+    this._setData();
+    this.emitOnChangesSubject();
+  }
+
+  public deactivateFreeze(): void {
+    this._getData();
+    for (const task of this.allTasks) {
+      if (task.addToLastDueDate) {
+        //... disregard?
+      } else if (task.freezeDate) {
+        task.nextDueDate = this.getFreezeShowDate(task);
+        delete task.freezeDate;
+      }
+    }
+    this.isFrozen = false;
+    this._setData();
+    this.emitOnChangesSubject();
+  }
+
+  private _getDateDifference(fromDateStr: string, toDateStr: string): number {
+    let fromDate = new Date(fromDateStr);
+    let toDate = new Date(toDateStr);
+
+    var diff = Math.abs(fromDate.getTime() - toDate.getTime());
+    var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+
+    return diffDays;
+  }
+
+  //returns the display-date that should be used in the UI, not the actual data.
+  public getFreezeShowDate(task: ITask): string {
+    if (task.freezeDate) {
+      const diff = this._getDateDifference(
+        task.freezeDate,
+        this.convertDateToString(new Date())
+      );
+      return this.setNextDueDate(task, IntervalMethod.Day, diff);
+    } else {
+      return task.nextDueDate;
+    }
+  }
+
+  public getFreezeState(): boolean {
+    return this.isFrozen;
+  }
+
+  //immer mit date dieser Funktion arbeiten? Wäre eig das schlauste. Fürn User am besten theoretisch...
+  //NUR wenn dieses add to lastDue, original ausgeben
 }

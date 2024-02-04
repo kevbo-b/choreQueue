@@ -12,6 +12,7 @@ export interface ITask {
   categoryId: string;
   timesSkipped: number;
   hidden: boolean;
+  freezeDate?: string;
 }
 
 export interface ICategory {
