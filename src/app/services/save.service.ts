@@ -51,9 +51,6 @@ export class SaveService {
 
   private onChangeSubject = new Subject<Task[]>();
 
-  private isFrozen = false;
-  private isFrozenKey: string = 'freezeState';
-
   private _getData() {
     //tasks
     if (this.allTasks.length == 0) {
@@ -95,15 +92,6 @@ export class SaveService {
       history = this._convertHistoryEntriesToTaskClass(history);
       this.history = history;
     }
-    //freeze
-    let isFrozen = JSON.parse(
-      localStorage.getItem(this.isFrozenKey) as string
-    ) as unknown as boolean;
-    if (isFrozen) {
-      this.isFrozen = isFrozen;
-    } else {
-      this.isFrozen = false;
-    }
   }
 
   private _setData() {
@@ -115,7 +103,6 @@ export class SaveService {
     localStorage.setItem(this.categoriesKey, JSON.stringify(this.categories));
     localStorage.setItem(this.miniTasksKey, JSON.stringify(this.miniTasks));
     localStorage.setItem(this.historyKey, JSON.stringify(this.history));
-    localStorage.setItem(this.isFrozenKey, JSON.stringify(this.isFrozen));
   }
 
   public getTaskById(id: string): Task | undefined {
@@ -124,7 +111,6 @@ export class SaveService {
   }
 
   public addNewTask(task: Task): void {
-    this._setTaskFreezeState(task);
     this.allTasks.push(task);
     this._setData();
   }
@@ -139,7 +125,9 @@ export class SaveService {
       taskToEdit.interval = task.interval;
       taskToEdit.xp = task.xp;
       taskToEdit.categoryId = task.categoryId;
-      this._setTaskFreezeState(taskToEdit);
+      if (task.freezeDate) {
+        taskToEdit.freezeDate = task.freezeDate;
+      }
     }
     this._setData();
   }
@@ -177,7 +165,6 @@ export class SaveService {
       }
       task.setNextDueDate();
       task.timesSkipped = 0;
-      this._setTaskFreezeState(task);
       this._setData();
     }
   }
@@ -192,7 +179,6 @@ export class SaveService {
       this.saveToHistory(task, ITimelineAction.Move);
       task.setNextDueDate(intervalMethod, amountToSkip, true);
       task.timesSkipped++;
-      this._setTaskFreezeState(task);
       this._setData();
     }
   }
@@ -354,15 +340,6 @@ export class SaveService {
     this._setData();
   }
 
-  private _setTaskFreezeState(task: Task) {
-    if (this.isFrozen) {
-      //set freeze date to today
-      task.activateFreeze();
-    } else {
-      task.deactivateFreeze();
-    }
-  }
-
   //-------------Mini Tasks
   public getAllMiniTasks(): Task[] {
     this._getData();
@@ -391,7 +368,6 @@ export class SaveService {
   }
 
   public addNewMiniTask(miniTask: Task): void {
-    this._setTaskFreezeState(miniTask);
     this.miniTasks.push(miniTask);
     this._setData();
   }
@@ -400,7 +376,6 @@ export class SaveService {
     this._getData();
     for (let miniTask of miniTasks) {
       miniTask.setNextDueDate(IntervalMethod.NeverRepeat, 0);
-      this._setTaskFreezeState(miniTask);
     }
     this.allTasks = [...this.allTasks, ...miniTasks];
     this._setData();
@@ -500,30 +475,50 @@ export class SaveService {
     }
   }
 
-  public activateFreeze(): void {
+  public freezeAllTasks(): void {
     this._getData();
     for (const task of this.allTasks) {
       task.activateFreeze();
     }
-    this.isFrozen = true;
     this._resetUndo();
     this._setData();
     this.emitOnChangesSubject();
   }
 
-  public deactivateFreeze(): void {
+  public unfreezeAlTasks(): void {
     this._getData();
     for (const task of this.allTasks) {
       task.deactivateFreeze();
     }
-    this.isFrozen = false;
     this._resetUndo();
     this._setData();
     this.emitOnChangesSubject();
   }
 
-  public getFreezeState(): boolean {
-    return this.isFrozen;
+  public freezeCategoryTasks(categoryId: string): void {
+    this._getData();
+    const categoryTasks = this.allTasks.filter((task) => {
+      return task.categoryId === categoryId;
+    });
+    for (const task of categoryTasks) {
+      task.activateFreeze();
+    }
+    this._resetUndo();
+    this._setData();
+    this.emitOnChangesSubject();
+  }
+
+  public unfreezeCategoryTasks(categoryId: string): void {
+    this._getData();
+    const categoryTasks = this.allTasks.filter((task) => {
+      return task.categoryId === categoryId;
+    });
+    for (const task of categoryTasks) {
+      task.deactivateFreeze();
+    }
+    this._resetUndo();
+    this._setData();
+    this.emitOnChangesSubject();
   }
 
   //--conversion from Interface to Class (used in getting Data from LocalStorage)

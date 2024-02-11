@@ -25,6 +25,8 @@ export class EditorComponent implements OnInit {
   public categories: ICategory[] = [];
   public date = '';
 
+  public isFrozen = false;
+
   public MAX_XP = 1000;
   private redirectedFrom = 'edit';
 
@@ -37,6 +39,9 @@ export class EditorComponent implements OnInit {
           if (task) {
             this.task = task;
             this.date = task.getDisplayDueDate();
+            if (this.task.freezeDate) {
+              this.isFrozen = true;
+            }
           } else {
             alert(`Task with the ID ${this.taskId} not found`);
             this.createNew = true;
@@ -69,7 +74,8 @@ export class EditorComponent implements OnInit {
     if (
       this.task.title === '' ||
       this.date === '' ||
-      this.task.interval.num < 1 ||
+      (this.task.interval.num < 1 &&
+        this.task.interval.method !== IntervalMethod.NeverRepeat) ||
       this.task.xp < 0 ||
       this.task.xp > this.MAX_XP
     ) {
@@ -77,8 +83,13 @@ export class EditorComponent implements OnInit {
         'Error: Not saved! Wrong inputs in title, nextDueDate, interval or XP.'
       );
     } else {
-      //if inputs are ok...
+      //if inputs are ok, set & save them
       this.task.setNextDueDateValue(this.date);
+      if (this.isFrozen) {
+        this.task.activateFreeze();
+      } else {
+        this.task.deactivateFreeze();
+      }
       if (this.createNew) {
         this.task.id = uuid();
         this.saveService.addNewTask(this.task);

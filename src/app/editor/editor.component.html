@@ -83,5 +83,18 @@
 <textarea
   [(ngModel)]="task.description"
   rows="4"
-  [ngStyle]="{ width: 100 }"
+  class="descriptionTextArea"
 ></textarea>
+
+<div class="editorRow">
+  <div>
+    <h4>Freeze Mode ❄️</h4>
+    <input type="checkbox" [(ngModel)]="isFrozen" />
+    <label [ariaDisabled]="">Is Frozen</label>
+  </div>
+  <span
+    >The days till a task is due wont change till you unfreeze. Example: "Taxes"
+    are due in 3 days. When you freeze it, they will still be at 3 days
+    tomorrow.</span
+  >
+</div>

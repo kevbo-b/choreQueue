@@ -14,6 +14,12 @@
       <div class="task-title-text" [innerHTML]="category.name"></div>
       <div class="task-last-post">Priority: {{ category.priorityPlace }}</div>
     </div>
+    <button class="task-delete-btn" (click)="freezeCategoryTasks(category)">
+      Freeze Tasks
+    </button>
+    <button class="task-delete-btn" (click)="unfreezeCategoryTasks(category)">
+      Unfreeze Tasks
+    </button>
     <!-- non-user made ids will be under 10 characters, and should not be deleted (for example: Default Category) -->
     <button
       *ngIf="category.id.length > 10"
@@ -40,4 +46,10 @@
       </button>
     </div>
   </div>
+</div>
+
+<div class="tippContainer">
+  <strong>Tipp: </strong> You can Edit the order in which the Categories are
+  shown in the Timeline. Use the arrows to move a category up/down to adujst
+  their order.
 </div>

@@ -51,4 +51,20 @@ export class CategoriesComponent {
       this.getAndSortCategories();
     }
   }
+
+  public freezeCategoryTasks(category: ICategory): void {
+    //freeze
+    let confirmText = `Should all tasks in the Category "${category.name}" be frozen?`;
+    if (confirm(confirmText)) {
+      this.saveService.freezeCategoryTasks(category.id);
+    }
+  }
+
+  public unfreezeCategoryTasks(category: ICategory): void {
+    //unfreeze
+    let confirmText = `Should all tasks in the Category "${category.name}" be unfrozen?`;
+    if (confirm(confirmText)) {
+      this.saveService.unfreezeCategoryTasks(category.id);
+    }
+  }
 }

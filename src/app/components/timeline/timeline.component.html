@@ -1,15 +1,14 @@
+<div>
+  <button (click)="undoAction()"><- Undo</button>
+  <button (click)="freezeAll()" class="freezeBtn">Freeze All Tasks</button>
+  <button (click)="unfreezeAll()" class="freezeBtn">Unfreeze All Tasks</button>
+</div>
+
 <h2 class="readable">Due Tasks</h2>
 <h5 class="readable">
   Today, {{ todaysDate | date }} ({{ todaysDate | date : "EE" }})
   {{ moonPhaseAlt() }}
 </h5>
-
-<button (click)="undoAction()"><- Undo</button>
-
-<button (click)="freezeButtonClicked()" class="freezeBtn">
-  <ng-container *ngIf="!isFrozen">Freeze All</ng-container>
-  <ng-container *ngIf="isFrozen">Unfreeze All</ng-container>
-</button>
 
 <div *ngIf="dueTasks.length > 0" class="day-container dueDay">
   <div *ngFor="let task of dueTasks" class="task-container">
@@ -26,8 +25,8 @@
 
 <hr class="seperator" />
 
-<div *ngFor="let task of futureDays" class="day-container notDueYet">
-  <h2 class="readable">
+<div *ngFor="let task of futureDays" class="day-container">
+  <h2 class="readable notDueYet">
     {{ task.date | date }} ({{ task.date | date : "EE" }}) (in
     {{ daysTillDueStr(task.date) }}) {{ getMoonIcon(task.date) }}
   </h2>
