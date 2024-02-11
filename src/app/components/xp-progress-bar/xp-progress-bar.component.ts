@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { SaveService } from 'src/app/services/save.service';
 
 @Component({
@@ -8,6 +8,8 @@ import { SaveService } from 'src/app/services/save.service';
 })
 export class XpProgressBarComponent implements OnInit {
   public progress = -1;
+
+  @Input() public useAsFixedBar = true;
 
   public constructor(public readonly saveService: SaveService) {}
 

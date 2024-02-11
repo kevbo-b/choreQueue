@@ -1,9 +1,15 @@
-.progress-bar {
+.progress-bar-fixed {
   width: 100%;
   height: 25px;
   background-color: #222;
   position: fixed;
   bottom: 1em;
+}
+
+.progress-bar-unfixed {
+  width: 100%;
+  height: 25px;
+  background-color: #222;
 }
 
 .progress-bar-fill {

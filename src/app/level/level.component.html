@@ -1,7 +1,9 @@
 <h3>Level</h3>
 
 <div>
-  Level: {{ levelProgress.level }} XP: {{ levelProgress.xp }} / {{ neededXP }}
+  Level: {{ levelProgress.level }} <br />XP: {{ levelProgress.xp }} /
+  {{ neededXP }}
+  <app-xp-progress-bar [useAsFixedBar]="false"></app-xp-progress-bar>
 </div>
 
 <h3>History</h3>

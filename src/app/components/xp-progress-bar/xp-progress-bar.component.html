@@ -1,5 +1,8 @@
 <div *ngIf="progress > -1">
-  <div class="progress-bar">
+  <div *ngIf="useAsFixedBar" class="progress-bar-fixed">
+    <div class="progress-bar-fill" [ngStyle]="{ 'width.%': progress }"></div>
+  </div>
+  <div *ngIf="!useAsFixedBar" class="progress-bar-unfixed">
     <div class="progress-bar-fill" [ngStyle]="{ 'width.%': progress }"></div>
   </div>
 </div>
