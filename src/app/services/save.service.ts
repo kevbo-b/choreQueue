@@ -144,10 +144,12 @@ export class SaveService {
     this._setData();
   }
 
-  public deleteTask(task: Task): void {
+  public deleteTask(task: Task, addToHistory = true): void {
     let taskToEdit = this.getTaskById(task.id);
     if (taskToEdit) {
-      this.saveToHistory(taskToEdit, ITimelineAction.Delete);
+      if (addToHistory) {
+        this.saveToHistory(taskToEdit, ITimelineAction.Delete);
+      }
       let index = this.allTasks.indexOf(taskToEdit, 0);
       if (index > -1) {
         this.allTasks.splice(index, 1);
@@ -164,11 +166,14 @@ export class SaveService {
   public completeTask(inputtedTask: Task): void {
     var task = this.getTaskById(inputtedTask.id);
     if (task) {
-      this.saveToHistory(task, ITimelineAction.Complete);
       this.addXP(inputtedTask.xp);
       if (task.interval.method == IntervalMethod.NeverRepeat) {
-        this.deleteTask(task);
+        this.saveToHistory(task, ITimelineAction.DeleteAndComplete);
+        this._setData();
+        this.deleteTask(task, false);
         return;
+      } else {
+        this.saveToHistory(task, ITimelineAction.Complete);
       }
       task.setNextDueDate();
       task.timesSkipped = 0;
@@ -436,7 +441,10 @@ export class SaveService {
       action: action,
       objectBeforeAction: _.cloneDeep(task),
     };
-    if (action === ITimelineAction.Complete) {
+    if (
+      action === ITimelineAction.Complete ||
+      action === ITimelineAction.DeleteAndComplete
+    ) {
       newHistoryEntry.xpGain = task.xp;
     }
     this.history.push(newHistoryEntry);
@@ -448,14 +456,28 @@ export class SaveService {
   }
 
   public undoHistoryAction(): void {
-    let historyEntry = this.history.pop();
-    this._setData();
-    if (historyEntry) {
-      const task = this.getTaskById(historyEntry.taskId);
-      if (historyEntry.action === ITimelineAction.Complete && task) {
+    let lastHistoryEntry = this.history[this.history.length - 1]; //last enty
+    if (lastHistoryEntry && lastHistoryEntry.objectBeforeAction) {
+      this.history.pop();
+      this._setData();
+      if (
+        lastHistoryEntry.action === ITimelineAction.Delete ||
+        lastHistoryEntry.action === ITimelineAction.DeleteAndComplete
+      ) {
+        if (lastHistoryEntry.objectBeforeAction) {
+          this.addNewTask(lastHistoryEntry.objectBeforeAction);
+        }
+      }
+      const task = this.getTaskById(lastHistoryEntry.taskId);
+      if (
+        task &&
+        (lastHistoryEntry.action === ITimelineAction.Complete ||
+          lastHistoryEntry.action === ITimelineAction.DeleteAndComplete)
+      ) {
         let taskIndex = this.allTasks.indexOf(task);
-        if (this.allTasks[taskIndex] && historyEntry.objectBeforeAction) {
-          this.allTasks[taskIndex] = historyEntry.objectBeforeAction;
+        //reverse Task completion
+        if (this.allTasks[taskIndex] && lastHistoryEntry.objectBeforeAction) {
+          this.allTasks[taskIndex] = lastHistoryEntry.objectBeforeAction;
           //reverse level
           this.levelProgress.xp =
             this.levelProgress.xp - this.allTasks[taskIndex].xp;
@@ -465,14 +487,11 @@ export class SaveService {
               this.levelProgress.xp + this.getLevelXP(this.levelProgress.level);
           }
         }
-      } else if (historyEntry.action === ITimelineAction.Move && task) {
+      }
+      if (lastHistoryEntry.action === ITimelineAction.Move && task) {
         let taskIndex = this.allTasks.indexOf(task);
-        if (this.allTasks[taskIndex] && historyEntry.objectBeforeAction) {
-          this.allTasks[taskIndex] = historyEntry.objectBeforeAction;
-        }
-      } else if (historyEntry.action === ITimelineAction.Delete) {
-        if (historyEntry.objectBeforeAction) {
-          this.addNewTask(historyEntry.objectBeforeAction);
+        if (this.allTasks[taskIndex] && lastHistoryEntry.objectBeforeAction) {
+          this.allTasks[taskIndex] = lastHistoryEntry.objectBeforeAction;
         }
       }
       this._setData();
@@ -536,16 +555,26 @@ export class SaveService {
     historyEntries: IHistoryEntry[]
   ): IHistoryEntry[] {
     for (let entry of historyEntries) {
-      entry.objectBeforeAction = this._convertITaskToTaskClass(
-        entry.objectBeforeAction as unknown as ITask
-      );
+      if (entry.objectBeforeAction) {
+        entry.objectBeforeAction = this._convertITaskToTaskClass(
+          entry.objectBeforeAction as unknown as ITask
+        );
+      }
     }
     return historyEntries;
   }
 
+  //Removes all previous obj's. And also removes all entries that arent a "complete" entry.
   private _resetUndo(): void {
-    for (let entry of this.history) {
+    for (let i = this.history.length - 1; i >= 0; i--) {
+      let entry = this.history[i];
       delete entry.objectBeforeAction;
+      if (
+        entry.action !== ITimelineAction.Complete &&
+        entry.action !== ITimelineAction.DeleteAndComplete
+      ) {
+        this.history.splice(i);
+      }
     }
     this._setData();
   }

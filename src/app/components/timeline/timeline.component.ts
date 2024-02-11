@@ -79,7 +79,7 @@ export class TimelineComponent implements OnInit {
   }
 
   public skipTask(task: Task): void {
-    if (task && _.isNumber(this.daysToSkip)) {
+    if (task && _.isNumber(this.daysToSkip) && this.daysToSkip !== 0) {
       this.saveService.skipTask(task, IntervalMethod.Day, this.daysToSkip);
     }
     this.showSkipDialog = false;

@@ -42,6 +42,7 @@ export enum ITimelineAction {
   Complete,
   Delete,
   Move,
+  DeleteAndComplete,
 }
 
 export interface IDeletedTaskName {

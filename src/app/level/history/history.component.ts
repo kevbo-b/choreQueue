@@ -27,7 +27,10 @@ export class HistoryComponent implements OnInit {
 
   public filterCompleteTasks() {
     this.completionHistoryEntries = this.allHistroyEntries.filter((entry) => {
-      return entry.action === ITimelineAction.Complete;
+      return (
+        entry.action === ITimelineAction.Complete ||
+        entry.action === ITimelineAction.DeleteAndComplete
+      );
     });
     this.completionHistoryEntries.reverse(); //so newest completions are on top
   }
@@ -41,7 +44,11 @@ export class HistoryComponent implements OnInit {
   }
 
   public clearHistory(): void {
-    if (confirm('Clear History? This cannot be undone.')) {
+    if (
+      confirm(
+        'Clear History? This cannot be undone. (XP and level will still be kept)'
+      )
+    ) {
       this.saveService.clearHistory();
       this.completionHistoryEntries = [];
     }
