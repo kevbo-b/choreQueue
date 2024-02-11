@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { ICategory, ITask } from 'src/app/models/task';
+import { Task } from 'src/app/models/task-class';
+import { ICategory } from 'src/app/models/task-interfaces';
 
 @Component({
   selector: 'app-task-panel',
@@ -8,7 +9,7 @@ import { ICategory, ITask } from 'src/app/models/task';
   styleUrls: ['./task-panel.component.scss'],
 })
 export class TaskPanelComponent {
-  @Input() public task: ITask | undefined;
+  @Input() public task: Task | undefined;
   @Input() public due: boolean = true;
   @Input() public categories: ICategory[] = [];
   @Output() public taskSkipped = new EventEmitter();
@@ -42,7 +43,7 @@ export class TaskPanelComponent {
     });
   }
 
-  getCategoryColor(task: ITask): string {
+  getCategoryColor(task: Task): string {
     for (let category of this.categories) {
       if (category.id == task.categoryId) {
         return category.color;
@@ -51,9 +52,9 @@ export class TaskPanelComponent {
     return '#4444bb';
   }
 
-  dueSince(task: ITask): number {
+  dueSince(task: Task): number {
     let today = new Date();
-    let dueDate = new Date(task?.nextDueDate);
+    let dueDate = new Date(task?.getDisplayDueDate());
 
     var diff = Math.abs(today.getTime() - dueDate.getTime());
     var diffDays = Math.ceil(diff / (1000 * 3600 * 24)) - 1;
@@ -61,7 +62,7 @@ export class TaskPanelComponent {
     return diffDays;
   }
 
-  dueSinceStr(task: ITask): string {
+  dueSinceStr(task: Task): string {
     let days = this.dueSince(task);
     if (days == 0) {
       return `Due since Today`;

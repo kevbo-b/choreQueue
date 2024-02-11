@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SaveService } from '../services/save.service';
-import { ILevelProgress } from '../models/task';
+import { ILevelProgress } from '../models/task-interfaces';
 
 @Component({
   selector: 'app-level',

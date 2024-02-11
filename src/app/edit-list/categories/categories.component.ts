@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ICategory } from 'src/app/models/task';
+import { ICategory } from 'src/app/models/task-interfaces';
 import { SaveService } from 'src/app/services/save.service';
 
 @Component({

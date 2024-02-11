@@ -18,7 +18,7 @@
     >
       <div class="task-title-text" [innerHTML]="task.title"></div>
       <div class="task-last-post">
-        Next due: {{ task.nextDueDate | date : "dd.MM.yyyy" }}
+        Next due: {{ task.getDisplayDueDate() | date : "dd.MM.yyyy" }}
       </div>
     </div>
     <button class="task-delete-btn" (click)="deleteTask(task)">Delete</button>

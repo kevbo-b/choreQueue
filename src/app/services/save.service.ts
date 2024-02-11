@@ -1,21 +1,17 @@
 import { Injectable } from '@angular/core';
+import { ITask, Task } from '../models/task-class';
+import { Subject } from 'rxjs';
+import * as _ from 'lodash';
+import { IConfigDataTransfer } from '../models/options';
+import { convertDateToString } from '../models/task-helper-functions';
 import {
   ICategory,
   IHistoryEntry,
   ILevelProgress,
-  ITask,
   ITimelineAction,
   IXpChangeMessage,
   IntervalMethod,
-} from '../models/task';
-import { Subject } from 'rxjs';
-import * as _ from 'lodash';
-import { IConfigDataTransfer } from '../models/options';
-import {
-  convertDateToString,
-  getDisplayDueDate,
-  getNextDueDate,
-} from '../models/task-helper-funcions';
+} from '../models/task-interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +19,7 @@ import {
 export class SaveService {
   constructor() {}
 
-  private allTasks: ITask[] = [];
+  private allTasks: Task[] = [];
   private tasksKey = 'choreTasks';
 
   private levelProgress: ILevelProgress = {
@@ -42,7 +38,7 @@ export class SaveService {
   };
   private categoriesKey = 'taskCategories';
 
-  private miniTasks: ITask[] = [];
+  private miniTasks: Task[] = [];
   private miniTasksKey: string = 'miniTasks';
 
   private history: IHistoryEntry[] = [];
@@ -50,7 +46,7 @@ export class SaveService {
 
   private levelSubject = new Subject<IXpChangeMessage>();
 
-  private onChangeSubject = new Subject<ITask[]>();
+  private onChangeSubject = new Subject<Task[]>();
 
   private isFrozen = false;
   private isFrozenKey: string = 'freezeState';
@@ -62,7 +58,7 @@ export class SaveService {
         localStorage.getItem(this.tasksKey) as string
       ) as unknown as ITask[];
       if (choreTasksData) {
-        this.allTasks = choreTasksData;
+        this.allTasks = this._convertITaskArrayToTaskClass(choreTasksData);
       }
     }
     //level
@@ -86,13 +82,14 @@ export class SaveService {
       localStorage.getItem(this.miniTasksKey) as string
     ) as unknown as ITask[];
     if (miniTasks && miniTasks.length > 0) {
-      this.miniTasks = miniTasks;
+      this.miniTasks = this._convertITaskArrayToTaskClass(miniTasks);
     }
     //history
     let history = JSON.parse(
       localStorage.getItem(this.historyKey) as string
     ) as unknown as IHistoryEntry[];
     if (history && history.length > 0) {
+      history = this._convertHistoryEntriesToTaskClass(history);
       this.history = history;
     }
     //freeze
@@ -118,7 +115,7 @@ export class SaveService {
     localStorage.setItem(this.isFrozenKey, JSON.stringify(this.isFrozen));
   }
 
-  public getTaskById(id: string): ITask | undefined {
+  public getTaskById(id: string): Task | undefined {
     this._getData();
     for (let task of this.allTasks) {
       if (id == task.id) {
@@ -128,28 +125,28 @@ export class SaveService {
     return undefined;
   }
 
-  public addNewTask(task: ITask): void {
-    this._handleFreezeCalculation(task);
+  public addNewTask(task: Task): void {
+    this._setTaskFreezeState(task);
     this.allTasks.push(task);
     this._setData();
   }
 
-  public editTask(task: ITask): void {
+  public editTask(task: Task): void {
     let taskToEdit = this.getTaskById(task.id);
     if (taskToEdit) {
       taskToEdit.title = task.title;
       taskToEdit.description = task.description;
-      taskToEdit.nextDueDate = task.nextDueDate;
+      taskToEdit.setNextDueDateValue(task.getDisplayDueDate());
       taskToEdit.addToLastDueDate = task.addToLastDueDate;
       taskToEdit.interval = task.interval;
       taskToEdit.xp = task.xp;
       taskToEdit.categoryId = task.categoryId;
+      this._setTaskFreezeState(taskToEdit);
     }
-    this._handleFreezeCalculation(task);
     this._setData();
   }
 
-  public deleteTask(task: ITask): void {
+  public deleteTask(task: Task): void {
     let taskToEdit = this.getTaskById(task.id);
     if (taskToEdit) {
       this.saveToHistory(taskToEdit, ITimelineAction.Delete);
@@ -161,12 +158,12 @@ export class SaveService {
     this._setData();
   }
 
-  public getAllTasks(): ITask[] {
+  public getAllTasks(): Task[] {
     this._getData();
     return this.allTasks;
   }
 
-  public completeTask(inputtedTask: ITask): void {
+  public completeTask(inputtedTask: Task): void {
     var task = this.getTaskById(inputtedTask.id);
     if (task) {
       this.saveToHistory(task, ITimelineAction.Complete);
@@ -175,41 +172,24 @@ export class SaveService {
         this.deleteTask(task);
         return;
       }
-      task.nextDueDate = getNextDueDate(
-        task,
-        task.interval.method,
-        task.interval.num
-      );
+      task.setNextDueDate();
       task.timesSkipped = 0;
-      this._handleFreezeCalculation(task);
+      this._setTaskFreezeState(task);
       this._setData();
     }
   }
 
-  private _handleFreezeCalculation(task: ITask) {
-    if (this.isFrozen) {
-      //set freeze date to today
-      task.freezeDate = convertDateToString(new Date());
-    }
-    console.log(task, task.freezeDate);
-  }
-
   public skipTask(
-    inputtedTask: ITask,
+    inputtedTask: Task,
     intervalMethod: IntervalMethod,
     amountToSkip: number
   ): void {
     var task = this.getTaskById(inputtedTask.id);
     if (task) {
       this.saveToHistory(task, ITimelineAction.Move);
-      task.nextDueDate = getNextDueDate(
-        inputtedTask,
-        intervalMethod,
-        amountToSkip,
-        true
-      );
+      task.setNextDueDate(intervalMethod, amountToSkip, true);
       task.timesSkipped++;
-      this._handleFreezeCalculation(task);
+      this._setTaskFreezeState(task);
       this._setData();
     }
   }
@@ -371,13 +351,22 @@ export class SaveService {
     this._setData();
   }
 
+  private _setTaskFreezeState(task: Task) {
+    if (this.isFrozen) {
+      //set freeze date to today
+      task.activateFreeze();
+    } else {
+      task.deactivateFreeze();
+    }
+  }
+
   //-------------Mini Tasks
-  public getAllMiniTasks(): ITask[] {
+  public getAllMiniTasks(): Task[] {
     this._getData();
     return this.miniTasks;
   }
 
-  public deleteMiniTask(minitask: ITask): void {
+  public deleteMiniTask(minitask: Task): void {
     let taskToEdit = this.getMiniTaskById(minitask.id);
     if (taskToEdit) {
       let index = this.miniTasks.indexOf(taskToEdit, 0);
@@ -388,7 +377,7 @@ export class SaveService {
     this._setData();
   }
 
-  public getMiniTaskById(id: string): ITask | undefined {
+  public getMiniTaskById(id: string): Task | undefined {
     this._getData();
     for (let miniTask of this.miniTasks) {
       if (id == miniTask.id) {
@@ -398,21 +387,23 @@ export class SaveService {
     return undefined;
   }
 
-  public addNewMiniTask(miniTask: ITask): void {
+  public addNewMiniTask(miniTask: Task): void {
+    this._setTaskFreezeState(miniTask);
     this.miniTasks.push(miniTask);
     this._setData();
   }
 
-  public addMiniTasksToQueue(miniTasks: ITask[]): void {
+  public addMiniTasksToQueue(miniTasks: Task[]): void {
     this._getData();
     for (let miniTask of miniTasks) {
-      miniTask.nextDueDate = convertDateToString(new Date());
+      miniTask.setNextDueDate(IntervalMethod.NeverRepeat, 0);
+      this._setTaskFreezeState(miniTask);
     }
     this.allTasks = [...this.allTasks, ...miniTasks];
     this._setData();
   }
 
-  public getOnChangeSubject(): Subject<ITask[]> {
+  public getOnChangeSubject(): Subject<Task[]> {
     return this.onChangeSubject;
   }
 
@@ -440,7 +431,7 @@ export class SaveService {
     this._setData();
   }
 
-  private saveToHistory(task: ITask, action: ITimelineAction) {
+  private saveToHistory(task: Task, action: ITimelineAction) {
     let newHistoryEntry: IHistoryEntry = {
       taskId: task.id,
       date: convertDateToString(new Date()),
@@ -494,13 +485,8 @@ export class SaveService {
 
   public activateFreeze(): void {
     this._getData();
-    const today = convertDateToString(new Date());
     for (const task of this.allTasks) {
-      if (task.addToLastDueDate) {
-        //... disregard?
-      } else {
-        task.freezeDate = today;
-      }
+      task.activateFreeze();
     }
     this.isFrozen = true;
     this._setData();
@@ -510,12 +496,7 @@ export class SaveService {
   public deactivateFreeze(): void {
     this._getData();
     for (const task of this.allTasks) {
-      if (task.addToLastDueDate) {
-        //... disregard?
-      } else if (task.freezeDate) {
-        task.nextDueDate = getDisplayDueDate(task);
-        delete task.freezeDate;
-      }
+      task.deactivateFreeze();
     }
     this.isFrozen = false;
     this._setData();
@@ -524,5 +505,41 @@ export class SaveService {
 
   public getFreezeState(): boolean {
     return this.isFrozen;
+  }
+
+  //--conversion from Interface to Class (used in getting Data from LocalStorage)
+  private _convertITaskArrayToTaskClass(itasks: ITask[]): Task[] {
+    let arr: Task[] = [];
+    for (let itask of itasks) {
+      arr.push(this._convertITaskToTaskClass(itask));
+    }
+    return arr;
+  }
+
+  private _convertITaskToTaskClass(itask: ITask): Task {
+    let task = new Task();
+    task.id = itask.id;
+    task.title = itask.title;
+    task.description = itask.description;
+    task.interval = itask.interval;
+    task.addToLastDueDate = itask.addToLastDueDate;
+    task.xp = itask.xp;
+    task.categoryId = itask.categoryId;
+    task.timesSkipped = itask.timesSkipped;
+    task.hidden = itask.hidden;
+    task.freezeDate = itask.freezeDate;
+    task.setNextDueDateValue(itask.nextDueDate);
+    return task;
+  }
+
+  private _convertHistoryEntriesToTaskClass(
+    historyEntries: IHistoryEntry[]
+  ): IHistoryEntry[] {
+    for (let entry of historyEntries) {
+      entry.objectBeforeAction = this._convertITaskToTaskClass(
+        entry.objectBeforeAction as unknown as ITask
+      );
+    }
+    return historyEntries;
   }
 }

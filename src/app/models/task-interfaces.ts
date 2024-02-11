@@ -1,19 +1,4 @@
-export interface ITask {
-  id: string;
-  title: string;
-  description: string;
-  nextDueDate: string;
-  interval: {
-    method: IntervalMethod;
-    num: number;
-  };
-  addToLastDueDate: boolean;
-  xp: number;
-  categoryId: string;
-  timesSkipped: number;
-  hidden: boolean;
-  freezeDate?: string;
-}
+import { Task } from './task-class';
 
 export interface ICategory {
   id: string;
@@ -32,7 +17,7 @@ export enum IntervalMethod {
 
 export interface IDay {
   date: string;
-  tasks: ITask[];
+  tasks: Task[];
 }
 
 export interface ILevelProgress {
@@ -49,7 +34,7 @@ export interface IHistoryEntry {
   taskId: string;
   date: string;
   action: ITimelineAction;
-  objectBeforeAction?: ITask;
+  objectBeforeAction?: Task;
   xpGain?: number;
 }
 

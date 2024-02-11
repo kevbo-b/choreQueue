@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { ITask, IntervalMethod } from 'src/app/models/task';
+import { Task } from 'src/app/models/task-class';
+import { IntervalMethod } from 'src/app/models/task-interfaces';
 import { SaveService } from 'src/app/services/save.service';
 import { v4 as uuid } from 'uuid';
 
@@ -12,10 +13,10 @@ import { v4 as uuid } from 'uuid';
 export class MiniTaskSelectorComponent implements OnInit {
   @Output() public miniTasksSelected = new EventEmitter();
 
-  allTasks: ITask[] = [];
-  miniTasks: ITask[] = [];
+  allTasks: Task[] = [];
+  miniTasks: Task[] = [];
   disabledIds: string[] = []; //Tasks that already are in the task timeline
-  selectedMiniTasks: ITask[] = [];
+  selectedMiniTasks: Task[] = [];
 
   customMiniTaskChecked = false;
   customMiniTaskText = '';
@@ -53,7 +54,7 @@ export class MiniTaskSelectorComponent implements OnInit {
     return false;
   }
 
-  onCheckChange(event: any, miniTask: ITask) {
+  onCheckChange(event: any, miniTask: Task) {
     if (event.target.checked) {
       //add to list
       this.selectedMiniTasks.push(miniTask);
@@ -70,21 +71,20 @@ export class MiniTaskSelectorComponent implements OnInit {
 
   emitSelectedMiniTasks() {
     if (this.customMiniTaskChecked && this.customMiniTaskText) {
-      this.selectedMiniTasks.push({
-        id: uuid(),
-        title: this.customMiniTaskText,
-        xp: this.customMiniTaskXP,
-        addToLastDueDate: false,
-        categoryId: 'default',
-        description: '',
-        interval: {
-          method: IntervalMethod.NeverRepeat,
-          num: -1,
-        },
-        nextDueDate: '',
-        timesSkipped: 0,
-        hidden: false,
-      });
+      let newMiniTask = new Task();
+      newMiniTask.id = uuid();
+      newMiniTask.title = this.customMiniTaskText;
+      newMiniTask.xp = this.customMiniTaskXP;
+      newMiniTask.addToLastDueDate = false;
+      newMiniTask.categoryId = 'default';
+      newMiniTask.description = '';
+      newMiniTask.interval = {
+        method: IntervalMethod.NeverRepeat,
+        num: -1,
+      };
+      newMiniTask.timesSkipped = 0;
+      newMiniTask.hidden = false;
+      this.selectedMiniTasks.push(newMiniTask);
     }
     this.saveService.addMiniTasksToQueue(this.selectedMiniTasks);
     this.saveService.emitOnChangesSubject();

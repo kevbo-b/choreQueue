@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IHistoryEntry, ITimelineAction } from 'src/app/models/task';
+import { IHistoryEntry, ITimelineAction } from 'src/app/models/task-interfaces';
 import { SaveService } from 'src/app/services/save.service';
 
 @Component({

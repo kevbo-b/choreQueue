@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ICategory, ITask, IntervalMethod } from '../models/task';
 import { ActivatedRoute, Router } from '@angular/router';
 import { v4 as uuid } from 'uuid';
 import { SaveService } from '../services/save.service';
 import * as _ from 'lodash';
+import { Task } from '../models/task-class';
+import { ICategory, IntervalMethod } from '../models/task-interfaces';
 
 @Component({
   selector: 'app-editor',
@@ -19,23 +20,10 @@ export class EditorComponent implements OnInit {
 
   createNew = false;
   taskId = '';
-  public task: ITask = {
-    id: '',
-    title: '',
-    description: '',
-    nextDueDate: '',
-    interval: {
-      method: IntervalMethod.Day,
-      num: 7,
-    },
-    addToLastDueDate: false,
-    xp: 100,
-    categoryId: 'default',
-    timesSkipped: 0,
-    hidden: false,
-  };
+  public task: Task = new Task();
   public intervalMethod = IntervalMethod;
   public categories: ICategory[] = [];
+  public date = '';
 
   public MAX_XP = 1000;
   private redirectedFrom = 'edit';
@@ -48,6 +36,7 @@ export class EditorComponent implements OnInit {
           let task = _.cloneDeep(this.saveService.getTaskById(this.taskId));
           if (task) {
             this.task = task;
+            this.date = task.getDisplayDueDate();
           } else {
             alert(`Task with the ID ${this.taskId} not found`);
             this.createNew = true;
@@ -64,7 +53,7 @@ export class EditorComponent implements OnInit {
         this.redirectedFrom = params['redirectedFrom'];
       }
       if ('dayPreset' in params) {
-        this.task.nextDueDate = params['dayPreset'];
+        this.date = params['dayPreset'];
       }
     });
   }
@@ -79,7 +68,7 @@ export class EditorComponent implements OnInit {
     //validation
     if (
       this.task.title === '' ||
-      this.task.nextDueDate === '' ||
+      this.date === '' ||
       this.task.interval.num < 1 ||
       this.task.xp < 0 ||
       this.task.xp > this.MAX_XP
@@ -89,6 +78,7 @@ export class EditorComponent implements OnInit {
       );
     } else {
       //if inputs are ok...
+      this.task.setNextDueDateValue(this.date);
       if (this.createNew) {
         this.task.id = uuid();
         this.saveService.addNewTask(this.task);
@@ -100,6 +90,7 @@ export class EditorComponent implements OnInit {
         alert('Task Edited!');
         this.task = _.cloneDeep(this.task); //decouple reference
       }
+      this.date = this.task.getDisplayDueDate();
     }
   }
 

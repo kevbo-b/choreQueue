@@ -3,11 +3,13 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { round } from 'lodash';
 import { DueTasksSortMode, IOptions, MoonMode } from 'src/app/models/options';
-import { ICategory, IDay, ITask, IntervalMethod } from 'src/app/models/task';
+import { Task } from 'src/app/models/task-class';
+import { convertDateToString } from 'src/app/models/task-helper-functions';
 import {
-  convertDateToString,
-  getDisplayDueDate,
-} from 'src/app/models/task-helper-funcions';
+  ICategory,
+  IDay,
+  IntervalMethod,
+} from 'src/app/models/task-interfaces';
 import { SaveService } from 'src/app/services/save.service';
 import { SettingsService } from 'src/app/services/settings.service';
 
@@ -17,11 +19,11 @@ import { SettingsService } from 'src/app/services/settings.service';
   styleUrls: ['./timeline.component.scss'],
 })
 export class TimelineComponent implements OnInit {
-  private _tasks: ITask[] = [];
+  private _tasks: Task[] = [];
   public categories: ICategory[] = [];
 
   public showSkipDialog = false;
-  public skipDialogTask: ITask | undefined;
+  public skipDialogTask: Task | undefined;
   public daysToSkip: number = 1;
   public newDueDateOnSkip: Date = new Date();
 
@@ -31,7 +33,7 @@ export class TimelineComponent implements OnInit {
 
   private _dueSortMode = DueTasksSortMode;
 
-  public dueTasks: ITask[] = [];
+  public dueTasks: Task[] = [];
   public futureDays: IDay[] = [];
 
   public isFrozen = false;
@@ -50,7 +52,7 @@ export class TimelineComponent implements OnInit {
     });
   }
 
-  openSkipTaskPopup(task: ITask) {
+  openSkipTaskPopup(task: Task) {
     this.showSkipDialog = true;
     this.skipDialogTask = task;
     if (task.interval.method == IntervalMethod.Day) {
@@ -66,17 +68,17 @@ export class TimelineComponent implements OnInit {
   calcNewDueDateForSkip(daysToSkip: number) {
     if (
       this.skipDialogTask &&
-      getDisplayDueDate(this.skipDialogTask) &&
+      this.skipDialogTask.getDisplayDueDate() &&
       _.isNumber(daysToSkip)
     ) {
-      this.newDueDateOnSkip = new Date(getDisplayDueDate(this.skipDialogTask));
+      this.newDueDateOnSkip = new Date(this.skipDialogTask.getDisplayDueDate());
       this.newDueDateOnSkip.setDate(
         this.newDueDateOnSkip.getDate() + daysToSkip
       );
     }
   }
 
-  public skipTask(task: ITask): void {
+  public skipTask(task: Task): void {
     if (task && _.isNumber(this.daysToSkip)) {
       this.saveService.skipTask(task, IntervalMethod.Day, this.daysToSkip);
     }
@@ -84,12 +86,12 @@ export class TimelineComponent implements OnInit {
     this.buildTimelineData();
   }
 
-  completeTask(task: ITask) {
+  completeTask(task: Task) {
     this.saveService.completeTask(task);
     this.buildTimelineData();
   }
 
-  deleteTask(task: ITask) {
+  deleteTask(task: Task) {
     this.saveService.deleteTask(task);
     this.buildTimelineData();
   }
@@ -109,7 +111,7 @@ export class TimelineComponent implements OnInit {
     }
   }
 
-  private buildTimelineData(tasks?: ITask[]) {
+  private buildTimelineData(tasks?: Task[]) {
     if (tasks) {
       this._tasks = tasks;
     } else {
@@ -125,20 +127,20 @@ export class TimelineComponent implements OnInit {
     this.isFrozen = this.saveService.getFreezeState();
   }
 
-  private getDueTasks(tasks: ITask[]): ITask[] {
-    let dueTasks: ITask[] = [];
+  private getDueTasks(tasks: Task[]): Task[] {
+    let dueTasks: Task[] = [];
     for (let task of tasks) {
-      if (this.isDue(getDisplayDueDate(task))) {
+      if (this.isDue(task.getDisplayDueDate())) {
         dueTasks.push(task);
       }
     }
     return dueTasks;
   }
 
-  private getFutureDays(allTasks: ITask[]): IDay[] {
-    let futureTasks: ITask[] = [];
+  private getFutureDays(allTasks: Task[]): IDay[] {
+    let futureTasks: Task[] = [];
     for (let task of allTasks) {
-      if (!this.isDue(getDisplayDueDate(task))) {
+      if (!this.isDue(task.getDisplayDueDate())) {
         futureTasks.push(task);
       }
     }
@@ -150,7 +152,7 @@ export class TimelineComponent implements OnInit {
       let addNew = true;
       for (let day of days) {
         //Add Task to existing day
-        if (day.date === getDisplayDueDate(task)) {
+        if (day.date === task.getDisplayDueDate()) {
           day.tasks.push(task);
           addNew = false;
           break;
@@ -159,7 +161,7 @@ export class TimelineComponent implements OnInit {
       //Add new Day
       if (addNew) {
         days.push({
-          date: getDisplayDueDate(task),
+          date: task.getDisplayDueDate(),
           tasks: [task],
         });
       }
@@ -186,9 +188,9 @@ export class TimelineComponent implements OnInit {
       this.dueTasks = this.sortTasksByCategory(this.dueTasks);
     } else {
       //sorts by due duration
-      this.dueTasks.sort((a: ITask, b: ITask) => {
+      this.dueTasks.sort((a: Task, b: Task) => {
         return (
-          Date.parse(getDisplayDueDate(a)) - Date.parse(getDisplayDueDate(b))
+          Date.parse(a.getDisplayDueDate()) - Date.parse(b.getDisplayDueDate())
         );
       });
     }
@@ -197,8 +199,8 @@ export class TimelineComponent implements OnInit {
     }
   }
 
-  private sortTasksByCategory(tasks: ITask[]): ITask[] {
-    tasks.sort((a: ITask, b: ITask) => {
+  private sortTasksByCategory(tasks: Task[]): Task[] {
+    tasks.sort((a: Task, b: Task) => {
       let priorityA = this.saveService.getCategoryById(a.categoryId)
         ?.priorityPlace as number;
       let priorityB = this.saveService.getCategoryById(b.categoryId)

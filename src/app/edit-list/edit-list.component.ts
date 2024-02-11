@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SaveService } from '../services/save.service';
-import { ICategory, ITask } from '../models/task';
+import { Task } from '../models/task-class';
+import { ICategory } from '../models/task-interfaces';
 
 @Component({
   selector: 'app-edit-list',
@@ -14,7 +15,7 @@ export class EditListComponent implements OnInit {
     public readonly saveService: SaveService
   ) {}
 
-  tasks: ITask[] = [];
+  tasks: Task[] = [];
   categories: ICategory[] = [];
 
   ngOnInit(): void {
@@ -24,7 +25,7 @@ export class EditListComponent implements OnInit {
   getAndSortTasks(): void {
     this.tasks = this.saveService.getAllTasks();
     this.categories = this.saveService.getAllCategories();
-    this.tasks.sort((a: ITask, b: ITask) => {
+    this.tasks.sort((a: Task, b: Task) => {
       let catA = this.getTaskCategory(a);
       let catB = this.getTaskCategory(b);
 
@@ -43,7 +44,7 @@ export class EditListComponent implements OnInit {
     this.router.navigate([path]);
   }
 
-  deleteTask(task: ITask): void {
+  deleteTask(task: Task): void {
     if (
       confirm(`Are you sure you want to delete "${task.title}" permanently?`) ==
       true
@@ -52,7 +53,7 @@ export class EditListComponent implements OnInit {
     }
   }
 
-  getTaskCategory(task: ITask): ICategory | undefined {
+  getTaskCategory(task: Task): ICategory | undefined {
     for (let category of this.categories) {
       if (task.categoryId == category.id) {
         return category;
@@ -61,7 +62,7 @@ export class EditListComponent implements OnInit {
     return undefined;
   }
 
-  getCategoryColor(task: ITask): string {
+  getCategoryColor(task: Task): string {
     for (let category of this.categories) {
       if (category.id == task.categoryId) {
         return category.color;

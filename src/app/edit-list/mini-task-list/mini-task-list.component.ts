@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ICategory, ITask, IntervalMethod } from 'src/app/models/task';
+import { Task } from 'src/app/models/task-class';
+import { ICategory, IntervalMethod } from 'src/app/models/task-interfaces';
 import { SaveService } from 'src/app/services/save.service';
 import { v4 as uuid } from 'uuid';
 
@@ -10,7 +11,7 @@ import { v4 as uuid } from 'uuid';
   styleUrls: ['./mini-task-list.component.scss'],
 })
 export class MiniTaskListComponent implements OnInit {
-  miniTasks: ITask[] = [];
+  miniTasks: Task[] = [];
 
   public xpField = 50;
   public titleField = '';
@@ -37,7 +38,7 @@ export class MiniTaskListComponent implements OnInit {
     this.router.navigate([path]);
   }
 
-  deleteMiniTask(miniTask: ITask): void {
+  deleteMiniTask(miniTask: Task): void {
     this.saveService.deleteMiniTask(miniTask);
     this.getData();
   }
@@ -51,27 +52,26 @@ export class MiniTaskListComponent implements OnInit {
     ) {
       alert('Error: Not saved! Wrong inputs in Title or XP.');
     } else {
-      this.saveService.addNewMiniTask({
-        id: uuid(),
-        title: this.titleField,
-        xp: this.xpField,
-        addToLastDueDate: false,
-        categoryId: 'default',
-        description: '',
-        interval: {
-          method: IntervalMethod.NeverRepeat,
-          num: -1,
-        },
-        nextDueDate: '',
-        timesSkipped: 0,
-        hidden: false,
-      });
+      let newMiniTask = new Task();
+      newMiniTask.id = uuid();
+      newMiniTask.title = this.titleField;
+      newMiniTask.xp = this.xpField;
+      newMiniTask.addToLastDueDate = false;
+      newMiniTask.categoryId = 'default';
+      newMiniTask.description = '';
+      newMiniTask.interval = {
+        method: IntervalMethod.NeverRepeat,
+        num: -1,
+      };
+      newMiniTask.timesSkipped = 0;
+      newMiniTask.hidden = false;
+      this.saveService.addNewMiniTask(newMiniTask);
       this.titleField = '';
       this.getData();
     }
   }
 
-  getCategoryColor(miniTask: ITask): string {
+  getCategoryColor(miniTask: Task): string {
     for (let category of this.categories) {
       if (category.id == miniTask.categoryId) {
         return category.color;

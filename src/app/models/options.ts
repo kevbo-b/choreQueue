@@ -1,4 +1,5 @@
-import { ICategory, ILevelProgress, ITask } from './task';
+import { Task } from './task-class';
+import { ICategory, ILevelProgress } from './task-interfaces';
 
 export interface IOptions {
   showMoons: MoonMode;
@@ -25,9 +26,9 @@ export enum DueTasksSortMode {
 }
 
 export interface IConfigDataTransfer {
-  tasks: ITask[];
+  tasks: Task[];
   categories: ICategory[];
-  miniTasks: ITask[];
+  miniTasks: Task[];
   level: ILevelProgress;
   settings: IOptions;
 }
