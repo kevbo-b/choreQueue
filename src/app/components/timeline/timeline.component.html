@@ -7,8 +7,8 @@
 <button (click)="undoAction()"><- Undo</button>
 
 <button (click)="freezeButtonClicked()" class="freezeBtn">
-  <ng-container *ngIf="!isFrozen">Freeze</ng-container>
-  <ng-container *ngIf="isFrozen">Unfreeze</ng-container>
+  <ng-container *ngIf="!isFrozen">Freeze All</ng-container>
+  <ng-container *ngIf="isFrozen">Unfreeze All</ng-container>
 </button>
 
 <div *ngIf="dueTasks.length > 0" class="day-container dueDay">

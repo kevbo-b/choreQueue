@@ -7,11 +7,9 @@
   }"
 >
   <div class="task-content">
-    <div
-      class="task-title-text"
-      [innerHTML]="task.title"
-      (click)="showDetails = !showDetails"
-    ></div>
+    <div class="task-title-text" (click)="showDetails = !showDetails">
+      <span *ngIf="task.freezeDate">❄️</span>{{ task.title }}
+    </div>
     <div *ngIf="showDetails" class="task-options">
       <div class="task-description" [innerHTML]="task.description"></div>
       <span *ngIf="task.description.length == 0" class="task-description-empty"
