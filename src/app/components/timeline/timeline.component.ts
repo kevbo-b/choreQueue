@@ -219,7 +219,7 @@ export class TimelineComponent implements OnInit {
     let today = new Date();
     const dayAmountToShow = 100;
 
-    for (let i = 0; i < dayAmountToShow; i++) {
+    for (let i = 1; i < dayAmountToShow; i++) {
       var dayDate = new Date();
       dayDate.setDate(today.getDate() + i);
       var dayDateStr = convertDateToString(dayDate);
