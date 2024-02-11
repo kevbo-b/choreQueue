@@ -4,7 +4,12 @@
   {{ moonPhaseAlt() }}
 </h5>
 
-<button (click)="undoAction()">Undo</button>
+<button (click)="undoAction()"><- Undo</button>
+
+<button (click)="freezeButtonClicked()" class="freezeBtn">
+  <ng-container *ngIf="!isFrozen">Freeze</ng-container>
+  <ng-container *ngIf="isFrozen">Unfreeze</ng-container>
+</button>
 
 <div *ngIf="dueTasks.length > 0" class="day-container dueDay">
   <div *ngFor="let task of dueTasks" class="task-container">

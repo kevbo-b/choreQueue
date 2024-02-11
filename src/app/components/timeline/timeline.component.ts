@@ -30,6 +30,8 @@ export class TimelineComponent implements OnInit {
   public dueTasks: ITask[] = [];
   public futureDays: IDay[] = [];
 
+  public isFrozen = false;
+
   public constructor(
     public readonly saveService: SaveService,
     public readonly settingsService: SettingsService,
@@ -111,6 +113,8 @@ export class TimelineComponent implements OnInit {
     this.futureDays = _.cloneDeep(this.getFutureDays(this._tasks));
     //sort them
     this.sortData();
+    //also get freeze state
+    this.isFrozen = this.saveService.getFreezeState();
   }
 
   private getDueTasks(tasks: ITask[]): ITask[] {
@@ -242,6 +246,22 @@ export class TimelineComponent implements OnInit {
       return `1 day`;
     } else {
       return `${days} days`;
+    }
+  }
+
+  public freezeButtonClicked(): void {
+    if (this.isFrozen) {
+      //unfreeze
+      let confirmText = `Should all tasks be unfrozen?`;
+      if (confirm(confirmText)) {
+        this.saveService.deactivateFreeze();
+      }
+    } else {
+      //freeze
+      let confirmText = `Should all tasks be frozen? (The days till a task is due wont change till you unfreeze.)`;
+      if (confirm(confirmText)) {
+        this.saveService.activateFreeze();
+      }
     }
   }
 
