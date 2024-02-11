@@ -26,6 +26,7 @@ export class TimelineComponent implements OnInit {
   public skipDialogTask: Task | undefined;
   public daysToSkip: number = 1;
   public newDueDateOnSkip: Date = new Date();
+  public daysToSkipOffset: number = 0;
 
   public todaysDate: Date = new Date();
 
@@ -60,8 +61,14 @@ export class TimelineComponent implements OnInit {
     } else {
       this.daysToSkip = 1;
     }
+    //calculate diff to today
+    let daysDifference =
+      (Date.parse(task.getDisplayDueDate()) -
+        Date.parse(convertDateToString(new Date()))) /
+      (60 * 60 * 24 * 1000);
+    //Create offset so dueDate entries don't start at day -5 or something when skipping. Results in Better UI
+    this.daysToSkipOffset = Math.min(daysDifference, 0) * -1;
     //TODO: Support other methods of skipping in the UI (Months, years, regular interval...)
-    // this.saveService.completeTask(task, false);
     this.calcNewDueDateForSkip(this.daysToSkip);
   }
 
@@ -72,15 +79,20 @@ export class TimelineComponent implements OnInit {
       _.isNumber(daysToSkip)
     ) {
       this.newDueDateOnSkip = new Date(this.skipDialogTask.getDisplayDueDate());
+
       this.newDueDateOnSkip.setDate(
-        this.newDueDateOnSkip.getDate() + daysToSkip
+        this.newDueDateOnSkip.getDate() + daysToSkip + this.daysToSkipOffset
       );
     }
   }
 
   public skipTask(task: Task): void {
     if (task && _.isNumber(this.daysToSkip) && this.daysToSkip !== 0) {
-      this.saveService.skipTask(task, IntervalMethod.Day, this.daysToSkip);
+      this.saveService.skipTask(
+        task,
+        IntervalMethod.Day,
+        this.daysToSkip + this.daysToSkipOffset
+      );
     }
     this.showSkipDialog = false;
     this.buildTimelineData();
