@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
-import { isNumber, round } from 'lodash';
+import { round } from 'lodash';
 import { DueTasksSortMode, IOptions, MoonMode } from 'src/app/models/options';
 import { ICategory, IDay, ITask, IntervalMethod } from 'src/app/models/task';
+import {
+  convertDateToString,
+  getDisplayDueDate,
+} from 'src/app/models/task-helper-funcions';
 import { SaveService } from 'src/app/services/save.service';
 import { SettingsService } from 'src/app/services/settings.service';
 
@@ -60,8 +64,12 @@ export class TimelineComponent implements OnInit {
   }
 
   calcNewDueDateForSkip(daysToSkip: number) {
-    if (this.skipDialogTask?.nextDueDate && _.isNumber(daysToSkip)) {
-      this.newDueDateOnSkip = new Date(this.skipDialogTask?.nextDueDate);
+    if (
+      this.skipDialogTask &&
+      getDisplayDueDate(this.skipDialogTask) &&
+      _.isNumber(daysToSkip)
+    ) {
+      this.newDueDateOnSkip = new Date(getDisplayDueDate(this.skipDialogTask));
       this.newDueDateOnSkip.setDate(
         this.newDueDateOnSkip.getDate() + daysToSkip
       );
@@ -120,7 +128,7 @@ export class TimelineComponent implements OnInit {
   private getDueTasks(tasks: ITask[]): ITask[] {
     let dueTasks: ITask[] = [];
     for (let task of tasks) {
-      if (this.isDue(task.nextDueDate)) {
+      if (this.isDue(getDisplayDueDate(task))) {
         dueTasks.push(task);
       }
     }
@@ -130,7 +138,7 @@ export class TimelineComponent implements OnInit {
   private getFutureDays(allTasks: ITask[]): IDay[] {
     let futureTasks: ITask[] = [];
     for (let task of allTasks) {
-      if (!this.isDue(task.nextDueDate)) {
+      if (!this.isDue(getDisplayDueDate(task))) {
         futureTasks.push(task);
       }
     }
@@ -142,7 +150,7 @@ export class TimelineComponent implements OnInit {
       let addNew = true;
       for (let day of days) {
         //Add Task to existing day
-        if (day.date === task.nextDueDate) {
+        if (day.date === getDisplayDueDate(task)) {
           day.tasks.push(task);
           addNew = false;
           break;
@@ -151,7 +159,7 @@ export class TimelineComponent implements OnInit {
       //Add new Day
       if (addNew) {
         days.push({
-          date: task.nextDueDate,
+          date: getDisplayDueDate(task),
           tasks: [task],
         });
       }
@@ -179,7 +187,9 @@ export class TimelineComponent implements OnInit {
     } else {
       //sorts by due duration
       this.dueTasks.sort((a: ITask, b: ITask) => {
-        return Date.parse(a.nextDueDate) - Date.parse(b.nextDueDate);
+        return (
+          Date.parse(getDisplayDueDate(a)) - Date.parse(getDisplayDueDate(b))
+        );
       });
     }
     for (let futureDay of this.futureDays) {
@@ -210,7 +220,7 @@ export class TimelineComponent implements OnInit {
     for (let i = 0; i < dayAmountToShow; i++) {
       var dayDate = new Date();
       dayDate.setDate(today.getDate() + i);
-      var dayDateStr = this.saveService.convertDateToString(dayDate);
+      var dayDateStr = convertDateToString(dayDate);
       let dayExists = false;
       for (let day of days) {
         if (day.date == dayDateStr) {

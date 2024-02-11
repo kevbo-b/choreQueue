@@ -11,6 +11,11 @@ import {
 import { Subject } from 'rxjs';
 import * as _ from 'lodash';
 import { IConfigDataTransfer } from '../models/options';
+import {
+  convertDateToString,
+  getDisplayDueDate,
+  getNextDueDate,
+} from '../models/task-helper-funcions';
 
 @Injectable({
   providedIn: 'root',
@@ -161,17 +166,6 @@ export class SaveService {
     return this.allTasks;
   }
 
-  //Same as getAllTasks. Just the nextDueDate is already adjusted to the freezing. Recommended to use
-  public getAllTasksForDisplay(): ITask[] {
-    this._getData();
-    let allTaskClone = _.cloneDeep(this.allTasks);
-    //modify nextDueDate to show the date relative to the freeze date. So components dont have to handle this individually
-    for (let task of allTaskClone) {
-      task.nextDueDate = this.getFreezeShowDate(task);
-    }
-    return this.allTasks;
-  }
-
   public completeTask(inputtedTask: ITask): void {
     var task = this.getTaskById(inputtedTask.id);
     if (task) {
@@ -181,7 +175,7 @@ export class SaveService {
         this.deleteTask(task);
         return;
       }
-      task.nextDueDate = this.setNextDueDate(
+      task.nextDueDate = getNextDueDate(
         task,
         task.interval.method,
         task.interval.num
@@ -195,8 +189,9 @@ export class SaveService {
   private _handleFreezeCalculation(task: ITask) {
     if (this.isFrozen) {
       //set freeze date to today
-      task.freezeDate = this.convertDateToString(new Date());
+      task.freezeDate = convertDateToString(new Date());
     }
+    console.log(task, task.freezeDate);
   }
 
   public skipTask(
@@ -207,7 +202,7 @@ export class SaveService {
     var task = this.getTaskById(inputtedTask.id);
     if (task) {
       this.saveToHistory(task, ITimelineAction.Move);
-      task.nextDueDate = this.setNextDueDate(
+      task.nextDueDate = getNextDueDate(
         inputtedTask,
         intervalMethod,
         amountToSkip,
@@ -217,37 +212,6 @@ export class SaveService {
       this._handleFreezeCalculation(task);
       this._setData();
     }
-  }
-
-  private setNextDueDate(
-    task: ITask,
-    intervalMethod: IntervalMethod,
-    offset: number,
-    forceCalcOnPrevDueDate = false
-  ): string {
-    var baseDate = new Date(); //begin today
-    if (task.addToLastDueDate || forceCalcOnPrevDueDate) {
-      baseDate = new Date(task.nextDueDate); //begin on last supposed due Date
-    }
-    var newDate = new Date(baseDate);
-    //Add interval
-    if (intervalMethod == IntervalMethod.Day) {
-      newDate.setDate(newDate.getDate() + offset);
-    } else if (intervalMethod == IntervalMethod.Month) {
-      newDate = new Date(newDate.setMonth(newDate.getMonth() + offset));
-    } else if (intervalMethod == IntervalMethod.Year) {
-      newDate = new Date(baseDate.setFullYear(baseDate.getFullYear() + offset));
-    }
-
-    return this.convertDateToString(newDate);
-  }
-
-  public convertDateToString(date: Date): string {
-    var getYear = date.toLocaleString('default', { year: 'numeric' });
-    var getMonth = date.toLocaleString('default', { month: '2-digit' });
-    var getDay = date.toLocaleString('default', { day: '2-digit' });
-
-    return getYear + '-' + getMonth + '-' + getDay;
   }
 
   //-------------leveling
@@ -442,7 +406,7 @@ export class SaveService {
   public addMiniTasksToQueue(miniTasks: ITask[]): void {
     this._getData();
     for (let miniTask of miniTasks) {
-      miniTask.nextDueDate = this.convertDateToString(new Date());
+      miniTask.nextDueDate = convertDateToString(new Date());
     }
     this.allTasks = [...this.allTasks, ...miniTasks];
     this._setData();
@@ -479,7 +443,7 @@ export class SaveService {
   private saveToHistory(task: ITask, action: ITimelineAction) {
     let newHistoryEntry: IHistoryEntry = {
       taskId: task.id,
-      date: this.convertDateToString(new Date()),
+      date: convertDateToString(new Date()),
       action: action,
       objectBeforeAction: _.cloneDeep(task),
     };
@@ -530,7 +494,7 @@ export class SaveService {
 
   public activateFreeze(): void {
     this._getData();
-    const today = this.convertDateToString(new Date());
+    const today = convertDateToString(new Date());
     for (const task of this.allTasks) {
       if (task.addToLastDueDate) {
         //... disregard?
@@ -549,7 +513,7 @@ export class SaveService {
       if (task.addToLastDueDate) {
         //... disregard?
       } else if (task.freezeDate) {
-        task.nextDueDate = this.getFreezeShowDate(task);
+        task.nextDueDate = getDisplayDueDate(task);
         delete task.freezeDate;
       }
     }
@@ -558,33 +522,7 @@ export class SaveService {
     this.emitOnChangesSubject();
   }
 
-  private _getDateDifference(fromDateStr: string, toDateStr: string): number {
-    let fromDate = new Date(fromDateStr);
-    let toDate = new Date(toDateStr);
-
-    var diff = Math.abs(fromDate.getTime() - toDate.getTime());
-    var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
-
-    return diffDays;
-  }
-
-  //returns the display-date that should be used in the UI, not the actual data.
-  public getFreezeShowDate(task: ITask): string {
-    if (task.freezeDate) {
-      const diff = this._getDateDifference(
-        task.freezeDate,
-        this.convertDateToString(new Date())
-      );
-      return this.setNextDueDate(task, IntervalMethod.Day, diff);
-    } else {
-      return task.nextDueDate;
-    }
-  }
-
   public getFreezeState(): boolean {
     return this.isFrozen;
   }
-
-  //immer mit date dieser Funktion arbeiten? Wäre eig das schlauste. Fürn User am besten theoretisch...
-  //NUR wenn dieses add to lastDue, original ausgeben
 }
