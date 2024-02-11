@@ -1,5 +1,18 @@
-<p>history works!</p>
-
+<div class="historyEntry">
+  <div>Date</div>
+  <div>Task</div>
+  <div>XP</div>
+</div>
 <ng-container *ngFor="let entry of completionHistoryEntries">
-  <div>{{ entry.taskId }} {{ entry.xpGain }}</div>
+  <div class="historyEntry">
+    <div>
+      {{ entry.date | date }}
+    </div>
+    <div>{{ getTitle(entry.taskId) }}</div>
+    <div>
+      {{ entry.xpGain }}
+    </div>
+  </div>
 </ng-container>
+
+<button (click)="clearHistory()">Clear History</button>

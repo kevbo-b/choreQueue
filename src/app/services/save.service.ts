@@ -3,7 +3,10 @@ import { ITask, Task } from '../models/task-class';
 import { Subject } from 'rxjs';
 import * as _ from 'lodash';
 import { IConfigDataTransfer } from '../models/options';
-import { convertDateToString } from '../models/task-helper-functions';
+import {
+  convertDateToString,
+  getTaskById,
+} from '../models/task-helper-functions';
 import {
   ICategory,
   IHistoryEntry,
@@ -117,12 +120,7 @@ export class SaveService {
 
   public getTaskById(id: string): Task | undefined {
     this._getData();
-    for (let task of this.allTasks) {
-      if (id == task.id) {
-        return task;
-      }
-    }
-    return undefined;
+    return getTaskById(id, this.allTasks);
   }
 
   public addNewTask(task: Task): void {
@@ -489,6 +487,7 @@ export class SaveService {
       task.activateFreeze();
     }
     this.isFrozen = true;
+    this._resetUndo();
     this._setData();
     this.emitOnChangesSubject();
   }
@@ -499,6 +498,7 @@ export class SaveService {
       task.deactivateFreeze();
     }
     this.isFrozen = false;
+    this._resetUndo();
     this._setData();
     this.emitOnChangesSubject();
   }
@@ -541,5 +541,17 @@ export class SaveService {
       );
     }
     return historyEntries;
+  }
+
+  private _resetUndo(): void {
+    for (let entry of this.history) {
+      delete entry.objectBeforeAction;
+    }
+    this._setData();
+  }
+
+  public clearHistory(): void {
+    this.history = [];
+    this._setData();
   }
 }

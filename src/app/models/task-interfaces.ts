@@ -43,3 +43,8 @@ export enum ITimelineAction {
   Delete,
   Move,
 }
+
+export interface IDeletedTaskName {
+  id: string;
+  name: string;
+}

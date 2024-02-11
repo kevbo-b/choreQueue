@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Task } from 'src/app/models/task-class';
+import { getTaskById } from 'src/app/models/task-helper-functions';
 import { IHistoryEntry, ITimelineAction } from 'src/app/models/task-interfaces';
 import { SaveService } from 'src/app/services/save.service';
 
@@ -12,9 +14,14 @@ export class HistoryComponent implements OnInit {
 
   public allHistroyEntries: IHistoryEntry[] = [];
   public completionHistoryEntries: IHistoryEntry[] = [];
+  public allTasks: Task[] = [];
 
   ngOnInit(): void {
     this.allHistroyEntries = this.saveService.getHistory();
+    this.allTasks = [
+      ...this.saveService.getAllTasks(),
+      ...this.saveService.getAllMiniTasks(),
+    ];
     this.filterCompleteTasks();
   }
 
@@ -23,5 +30,20 @@ export class HistoryComponent implements OnInit {
       return entry.action === ITimelineAction.Complete;
     });
     this.completionHistoryEntries.reverse(); //so newest completions are on top
+  }
+
+  public getTitle(taskId: string): string {
+    let task = getTaskById(taskId, this.allTasks);
+    if (task) {
+      return task.title;
+    }
+    return taskId;
+  }
+
+  public clearHistory(): void {
+    if (confirm('Clear History? This cannot be undone.')) {
+      this.saveService.clearHistory();
+      this.completionHistoryEntries = [];
+    }
   }
 }
