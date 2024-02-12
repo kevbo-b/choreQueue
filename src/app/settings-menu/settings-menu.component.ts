@@ -26,7 +26,13 @@ export class SettingsMenuComponent implements OnInit {
 
   @ViewChild('fileImportElement') fileImportElement!: ElementRef;
   @ViewChild('imageImportElement') imageImportElement!: ElementRef;
-  options: IOptions | undefined;
+  options: IOptions = {
+    showAllDays: false,
+    showMoons: MoonMode.FullMoonOnly,
+    theme: Theme.Light,
+    dueTasksSortMode: DueTasksSortMode.Category,
+    backgroundSettings: BackgroundSettings.Fixed,
+  };
 
   public moonModes = MoonMode;
   public themes = Theme;
@@ -36,7 +42,10 @@ export class SettingsMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.options = this.settingsService.getOptions();
-    this.backgroundImgPreview = this.settingsService.getBgImage();
+    let bgImage = this.settingsService.getBgImage();
+    if (bgImage) {
+      this.backgroundImgPreview = bgImage;
+    }
     this.settingsService.getOnOptionsChangeSubject().subscribe((newOptions) => {
       this.options = newOptions;
     });
