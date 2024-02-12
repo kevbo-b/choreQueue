@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { SettingsService } from '../services/settings.service';
 import {
+  BackgroundSettings,
   DueTasksSortMode,
   IConfigDataTransfer,
   IOptions,
@@ -24,14 +25,18 @@ export class SettingsMenuComponent implements OnInit {
   ) {}
 
   @ViewChild('fileImportElement') fileImportElement!: ElementRef;
+  @ViewChild('imageImportElement') imageImportElement!: ElementRef;
   options: IOptions | undefined;
 
   public moonModes = MoonMode;
   public themes = Theme;
   public dueSortMode = DueTasksSortMode;
+  public backgroundSettings = BackgroundSettings;
+  public backgroundImgPreview = '';
 
   ngOnInit(): void {
     this.options = this.settingsService.getOptions();
+    this.backgroundImgPreview = this.settingsService.getBgImage();
     this.settingsService.getOnOptionsChangeSubject().subscribe((newOptions) => {
       this.options = newOptions;
     });
@@ -40,6 +45,7 @@ export class SettingsMenuComponent implements OnInit {
   public onSavePressed(): void {
     if (this.options) {
       this.settingsService.setOptions(this.options);
+      this.settingsService.saveBgImage(this.backgroundImgPreview);
     }
   }
 
@@ -51,6 +57,7 @@ export class SettingsMenuComponent implements OnInit {
     ) {
       this.settingsService.resetData();
       this.saveService.resetData();
+      this.backgroundImgPreview = '';
     }
   }
 
@@ -62,6 +69,7 @@ export class SettingsMenuComponent implements OnInit {
       miniTasks: this.saveService.getAllMiniTasks(),
       level: this.saveService.getLevelProgress(),
       settings: this.settingsService.getOptions(),
+      history: this.saveService.getHistory(),
     };
     let dateStr =
       new Date().toDateString() +
@@ -126,8 +134,40 @@ export class SettingsMenuComponent implements OnInit {
     }
   }
 
-  public importClicked(): void {
+  public importBackground(event: any): void {
+    let message = '';
+    let progress = 0;
+    let currentFile = 0;
+    let selectedFiles = event.target.files;
+
+    if (selectedFiles) {
+      const file: File | null = selectedFiles.item(0);
+
+      if (file) {
+        this.backgroundImgPreview = '';
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          try {
+            this.backgroundImgPreview = e.target.result;
+          } catch (err) {
+            alert('Error! Could not load image file.');
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+
+  public clearBgImage(): void {
+    this.backgroundImgPreview = '';
+  }
+
+  public importDataClicked(): void {
     this.fileImportElement.nativeElement.click();
+  }
+
+  public importBackgroundClicked(): void {
+    this.imageImportElement.nativeElement.click();
   }
 
   private _isInstanceOfData(object: any): object is IConfigDataTransfer {

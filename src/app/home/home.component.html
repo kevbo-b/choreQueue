@@ -1,4 +1,5 @@
-<div class="bg">
+<div [ngClass]="getDivClass()">
+  <img [ngClass]="getImgClass()" [src]="backgroundImg" />
   <button (click)="redirectToEditor()">Add Task</button>
   <button (click)="popupMiniTasks()">Add Unregular Tasks</button>
 

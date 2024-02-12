@@ -1,6 +1,31 @@
-.bg {
-  // background: url(../../assets/lez.png) no-repeat center top;
+.divNoBgImage {
+  background: url(../../assets/lez.png) no-repeat center top;
   background-image: linear-gradient(-170deg, #379299 50%, #063852 110%);
   background-size: cover;
   height: 100%;
+}
+
+.divWithStretchedBgImage {
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.imgStretched {
+  display: inline-block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.imgFixed {
+  pointer-events: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  z-index: -1;
 }

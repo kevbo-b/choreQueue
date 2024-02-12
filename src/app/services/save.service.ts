@@ -397,15 +397,23 @@ export class SaveService {
       xp: 0,
     };
     this.miniTasks = [];
+    this.history = [];
     this._setData();
   }
 
   //import
   public importData(data: IConfigDataTransfer): void {
-    this.allTasks = data.tasks;
+    this.allTasks = this._convertITaskArrayToTaskClass(
+      data.tasks as unknown as ITask[]
+    );
     this.categories = data.categories;
-    this.miniTasks = data.miniTasks;
+    this.miniTasks = this._convertITaskArrayToTaskClass(
+      data.tasks as unknown as ITask[]
+    );
     this.levelProgress = data.level;
+    if (data.history) {
+      this.history = this._convertHistoryEntriesToTaskClass(data.history);
+    }
     this._setData();
   }
 

@@ -2,28 +2,7 @@
 
 <h1>Settings</h1>
 
-<div *ngIf="options">
-  <div class="editorRow">
-    <div>
-      <h4>Show Moons of the Day</h4>
-      <select [(ngModel)]="options.showMoons">
-        <option [value]="moonModes.None">None</option>
-        <option [value]="moonModes.FullMoonOnly">Only Full Moons</option>
-        <option [value]="moonModes.All">All</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="editorRow">
-    <div>
-      <h4>Theme</h4>
-      <select [(ngModel)]="options.theme">
-        <option [value]="themes.Light">Light</option>
-        <option [value]="themes.Dark">Dark</option>
-      </select>
-    </div>
-  </div>
-
+<div *ngIf="options" class="optionsContainer">
   <div class="editorRow">
     <div>
       <h4>Show all days, even those without tasks</h4>
@@ -44,22 +23,62 @@
 
   <div class="editorRow">
     <div>
-      <h4>Background</h4>
-      ...
+      <h4>Show Moons of the Day</h4>
+      <select [(ngModel)]="options.showMoons">
+        <option [value]="moonModes.None">None</option>
+        <option [value]="moonModes.FullMoonOnly">Only Full Moons</option>
+        <option [value]="moonModes.All">All</option>
+      </select>
     </div>
   </div>
 
   <div class="editorRow">
-    <button (click)="onSavePressed()">Save</button>
+    <div>
+      <h4>Timeline Background</h4>
+      <button (click)="importBackgroundClicked()">Import</button>
+      <button (click)="clearBgImage()">Clear Image</button>
+      <input
+        #imageImportElement
+        type="file"
+        (change)="importBackground($event)"
+        [hidden]="true"
+        accept="image/png, image/jpeg"
+      />
+    </div>
+    <img [src]="backgroundImgPreview" class="backgroundImagePreview" />
+    <br />
+    Stretch Mode
+    <select [(ngModel)]="options.backgroundSettings">
+      <option [value]="backgroundSettings.Fixed">Fixed</option>
+      <option [value]="backgroundSettings.Stretched">Stretched</option>
+    </select>
   </div>
 
   <div class="editorRow">
     <div>
-      <h4>Import / Export Data</h4>
+      <h4>Theme (not implemented yet)</h4>
+      <select [(ngModel)]="options.theme">
+        <option [value]="themes.Light">Light</option>
+        <option [value]="themes.Dark">Dark</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="editorRow">
+    <button (click)="onSavePressed()" class="saveOptionsBtn">
+      Save Settings
+    </button>
+  </div>
+</div>
+
+<div>
+  <div class="editorRow">
+    <div>
+      <h4>Import / Export Data and Settings (as JSON)</h4>
 
       <button (click)="exportData()">Export</button>
 
-      <button (click)="importClicked()">Import</button>
+      <button (click)="importDataClicked()">Import</button>
 
       <input
         #fileImportElement
@@ -73,8 +92,10 @@
 
   <div class="editorRow">
     <div>
-      <h4 style="background-color: red">
-        <button (click)="onClearData()">Clear All Data</button>
+      <h4>
+        <button (click)="onClearData()" class="clearAllDataBtn">
+          Clear All Data
+        </button>
       </h4>
     </div>
   </div>
