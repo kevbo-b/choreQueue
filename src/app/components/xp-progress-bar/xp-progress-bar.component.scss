@@ -4,6 +4,7 @@
   background-color: #222;
   position: fixed;
   bottom: 1em;
+  z-index: 10;
 }
 
 .progress-bar-unfixed {
@@ -16,4 +17,20 @@
   background-color: #5f5;
   height: 100%; /* This is important */
   transition: all 0.35s ease-in-out;
+  z-index: 20;
+  margin-top: -18px;
+}
+
+.centerText {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 0px;
+  color: white;
+}
+
+.middle {
+  display: inline-block;
+  /* float:left;  remove */
+  margin: 8px 8px 0 0;
+  padding: 5px 8px;
 }

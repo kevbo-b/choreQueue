@@ -8,6 +8,8 @@ import { SaveService } from 'src/app/services/save.service';
 })
 export class XpProgressBarComponent implements OnInit {
   public progress = -1;
+  public level = -1;
+  public useEmoji = true;
 
   @Input() public useAsFixedBar = true;
 
@@ -15,11 +17,17 @@ export class XpProgressBarComponent implements OnInit {
 
   ngOnInit(): void {
     this.progress = this.saveService.getCurrentLevelProgressPercentage();
+    this.level = this.saveService.getLevelProgress().level;
     this.saveService.getLevelSubject().subscribe((xpChange) => {
       if (xpChange.isNewLevel) {
         //TODO: special animation etc.
+        this.level = this.level + 1;
       }
       this.progress = xpChange.progressPercentage;
     });
+  }
+
+  public getLevelEmoji(lvl: number): string {
+    return String.fromCodePoint(parseInt('1F600', 16) + lvl);
   }
 }

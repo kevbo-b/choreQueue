@@ -1,8 +1,11 @@
 <div *ngIf="progress > -1">
-  <div *ngIf="useAsFixedBar" class="progress-bar-fixed">
-    <div class="progress-bar-fill" [ngStyle]="{ 'width.%': progress }"></div>
-  </div>
-  <div *ngIf="!useAsFixedBar" class="progress-bar-unfixed">
+  <div
+    [ngClass]="useAsFixedBar ? 'progress-bar-fixed' : 'progress-bar-unfixed'"
+    class="centerText"
+  >
+    <span class="middle">
+      Lvl {{ level }} <span *ngIf="useEmoji">{{ getLevelEmoji(level) }}</span>
+    </span>
     <div class="progress-bar-fill" [ngStyle]="{ 'width.%': progress }"></div>
   </div>
 </div>
