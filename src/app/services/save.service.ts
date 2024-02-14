@@ -408,7 +408,7 @@ export class SaveService {
     );
     this.categories = data.categories;
     this.miniTasks = this._convertITaskArrayToTaskClass(
-      data.tasks as unknown as ITask[]
+      data.miniTasks as unknown as ITask[]
     );
     this.levelProgress = data.level;
     if (data.history) {
