@@ -4,8 +4,8 @@
   <button (click)="unfreezeAll()" class="freezeBtn">Unfreeze All Tasks</button>
 </div>
 
-<h2 class="readable">Due Tasks</h2>
-<h5 class="readable">
+<h2 class="readable outlinedText">Due Tasks</h2>
+<h5 class="readable outlinedText">
   Today, {{ todaysDate | date }} ({{ todaysDate | date : "EE" }})
   {{ moonPhaseAlt() }}
 </h5>
@@ -21,15 +21,17 @@
     ></app-task-panel>
   </div>
 </div>
-<div *ngIf="dueTasks.length === 0" class="readable">No due Tasks yet.</div>
+<div *ngIf="dueTasks.length === 0" class="readable outlinedText">
+  No due Tasks yet.
+</div>
 
 <hr class="seperator" />
 
 <div *ngFor="let task of futureDays" class="day-container">
-  <h2 class="readable notDueYet">
+  <h3 class="readable notDueYet outlinedText">
     {{ task.date | date }} ({{ task.date | date : "EE" }}) (in
     {{ daysTillDueStr(task.date) }}) {{ getMoonIcon(task.date) }}
-  </h2>
+  </h3>
   <div class="task-container" *ngFor="let task of task.tasks">
     <app-task-panel
       [task]="task"
@@ -40,7 +42,9 @@
       (taskDeleted)="deleteTask(task)"
     ></app-task-panel>
   </div>
-  <span class="addNewTaskOnDay readable" (click)="redirectToEditor(task.date)"
+  <span
+    class="addNewTaskOnDay readable outlinedText"
+    (click)="redirectToEditor(task.date)"
     >+ Add Task</span
   >
 </div>
