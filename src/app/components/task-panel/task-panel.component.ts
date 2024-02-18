@@ -21,9 +21,7 @@ export class TaskPanelComponent {
   public constructor(public readonly router: Router) {}
 
   completePrompt() {
-    if (this.task && confirm(`Complete "${this.task.title}"?`)) {
-      this.taskCompleted.emit();
-    }
+    this.taskCompleted.emit();
   }
 
   deletePrompt() {

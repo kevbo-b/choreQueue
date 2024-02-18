@@ -127,6 +127,13 @@ export class SaveService {
       taskToEdit.categoryId = task.categoryId;
       if (task.freezeDate) {
         taskToEdit.freezeDate = task.freezeDate;
+      } else {
+        delete taskToEdit.freezeDate;
+      }
+      if (task.usesStrictTime) {
+        taskToEdit.usesStrictTime = task.usesStrictTime;
+      } else {
+        delete taskToEdit.usesStrictTime;
       }
     }
     this._setData();
@@ -550,6 +557,7 @@ export class SaveService {
     task.timesSkipped = itask.timesSkipped;
     task.hidden = itask.hidden;
     task.freezeDate = itask.freezeDate;
+    task.usesStrictTime = itask.usesStrictTime;
     task.setNextDueDateValue(itask.nextDueDate);
     return task;
   }

@@ -23,7 +23,10 @@
 
   <div>
     <h4 *ngIf="createNew">First due date</h4>
-    <h4 *ngIf="!createNew">Next due date</h4>
+    <h4 *ngIf="!createNew">
+      Next due date <span *ngIf="isFrozen">❄️</span
+      ><span *ngIf="useStrictTime">❗</span>
+    </h4>
     <input type="date" [(ngModel)]="date" />
   </div>
 
@@ -89,12 +92,32 @@
 <div class="editorRow">
   <div>
     <h4>Freeze Mode ❄️</h4>
-    <input type="checkbox" [(ngModel)]="isFrozen" />
+    <input
+      type="checkbox"
+      [(ngModel)]="isFrozen"
+      (ngModelChange)="onFreezeChange()"
+    />
     <label [ariaDisabled]="">Is Frozen</label>
   </div>
   <span
     >The days till a task is due wont change till you unfreeze. Example: "Taxes"
     are due in 3 days. When you freeze it, they will still be at 3 days
     tomorrow.</span
+  >
+</div>
+
+<div class="editorRow">
+  <div>
+    <h4>Strict-Time Mode ❗</h4>
+    <input
+      type="checkbox"
+      [(ngModel)]="useStrictTime"
+      (ngModelChange)="onStictTimeChange()"
+    />
+    <label [ariaDisabled]="">Use Strict-Time</label>
+  </div>
+  <span
+    >Flag that should indicate that a task should be done exactly at this date.
+    If on, the Task cannot be frozen. (Not even with "Freeze All")</span
   >
 </div>

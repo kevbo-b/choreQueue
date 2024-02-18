@@ -55,6 +55,7 @@ export class SettingsMenuComponent implements OnInit {
     if (this.options) {
       this.settingsService.setOptions(this.options);
       this.settingsService.saveBgImage(this.backgroundImgPreview);
+      alert(`Settings saved!`);
     }
   }
 

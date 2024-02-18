@@ -26,6 +26,7 @@ export class EditorComponent implements OnInit {
   public date = '';
 
   public isFrozen = false;
+  public useStrictTime = false;
 
   public MAX_XP = 1000;
   private redirectedFrom = 'edit';
@@ -41,6 +42,9 @@ export class EditorComponent implements OnInit {
             this.date = task.getDisplayDueDate();
             if (this.task.freezeDate) {
               this.isFrozen = true;
+            }
+            if (this.task.usesStrictTime) {
+              this.useStrictTime = true;
             }
           } else {
             alert(`Task with the ID ${this.taskId} not found`);
@@ -85,6 +89,11 @@ export class EditorComponent implements OnInit {
     } else {
       //if inputs are ok, set & save them
       this.task.setNextDueDateValue(this.date);
+      if (this.useStrictTime) {
+        this.task.usesStrictTime = true;
+      } else {
+        this.task.usesStrictTime = false;
+      }
       if (this.isFrozen) {
         this.task.activateFreeze();
       } else {
@@ -107,5 +116,17 @@ export class EditorComponent implements OnInit {
 
   onBackPressed(): void {
     this.router.navigate(['/' + this.redirectedFrom]);
+  }
+
+  onFreezeChange(): void {
+    if (this.isFrozen) {
+      this.useStrictTime = false;
+    }
+  }
+
+  onStictTimeChange(): void {
+    if (this.useStrictTime) {
+      this.isFrozen = false;
+    }
   }
 }

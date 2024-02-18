@@ -16,6 +16,7 @@ export interface ITask {
   timesSkipped: number;
   hidden: boolean;
   freezeDate?: string;
+  usesStrictTime?: boolean;
 }
 
 export class Task {
@@ -35,6 +36,7 @@ export class Task {
   public timesSkipped: number = 0;
   public hidden: boolean = false;
   public freezeDate?: string;
+  public usesStrictTime?: boolean;
 
   private nextDueDate: string = '';
 
@@ -97,12 +99,15 @@ export class Task {
   }
 
   //Save the current day as freeze day (for reference. Used for calculations inside getDisplayDueDate())
+  //Only activates if it doesnt use strict-time
   public activateFreeze(): void {
-    if (this.addToLastDueDate) {
-      //... disregard?
-    } else {
-      const today = convertDateToString(new Date());
-      this.freezeDate = today;
+    if (!this.usesStrictTime) {
+      if (this.addToLastDueDate) {
+        //... disregard?
+      } else {
+        const today = convertDateToString(new Date());
+        this.freezeDate = today;
+      }
     }
   }
 

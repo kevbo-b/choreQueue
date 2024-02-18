@@ -8,7 +8,8 @@
 >
   <div class="task-content">
     <div class="task-title-text" (click)="showDetails = !showDetails">
-      <span *ngIf="task.freezeDate">❄️</span>{{ task.title }}
+      <span *ngIf="task.freezeDate">❄️</span
+      ><span *ngIf="task.usesStrictTime">❗</span>{{ task.title }}
     </div>
     <div *ngIf="showDetails" class="task-options">
       <div class="task-description" [innerHTML]="task.description"></div>

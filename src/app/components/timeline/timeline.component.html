@@ -86,6 +86,10 @@
       newDueDateOnSkip | date : "EE"
     }})
   </div>
+  <div *ngIf="skipDialogTask.usesStrictTime" class="warningText">
+    BEWARE: Stict-Time is activated. Moving this Task could make you miss this
+    time-based event. Move with intention!
+  </div>
   <div>
     <button (click)="showSkipDialog = false">Abord</button
     ><button (click)="skipTask(skipDialogTask)">Confirm and Move</button>
