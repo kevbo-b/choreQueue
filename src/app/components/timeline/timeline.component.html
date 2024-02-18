@@ -7,7 +7,7 @@
 <h2 class="readable outlinedText">Due Tasks</h2>
 <h5 class="readable outlinedText">
   Today, {{ todaysDate | date }} ({{ todaysDate | date : "EE" }})
-  {{ moonPhaseAlt() }}
+  {{ moonPhaseAlt(_options?.showMoons) }}
 </h5>
 
 <div *ngIf="dueTasks.length > 0" class="day-container dueDay">
@@ -30,7 +30,8 @@
 <div *ngFor="let task of futureDays" class="day-container">
   <h3 class="readable notDueYet outlinedText">
     {{ task.date | date }} ({{ task.date | date : "EE" }}) (in
-    {{ daysTillDueStr(task.date) }}) {{ getMoonIcon(task.date) }}
+    {{ daysTillDueStr(task.date) }})
+    {{ getMoonIcon(task.date, _options?.showMoons) }}
   </h3>
   <div class="task-container" *ngFor="let task of task.tasks">
     <app-task-panel

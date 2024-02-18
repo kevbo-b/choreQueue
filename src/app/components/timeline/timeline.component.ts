@@ -12,6 +12,7 @@ import {
 } from 'src/app/models/task-interfaces';
 import { SaveService } from 'src/app/services/save.service';
 import { SettingsService } from 'src/app/services/settings.service';
+import { getMoonIcon, moonPhaseAlt } from './moon-helper';
 
 @Component({
   selector: 'app-timeline',
@@ -30,12 +31,15 @@ export class TimelineComponent implements OnInit {
 
   public todaysDate: Date = new Date();
 
-  private _options: IOptions | undefined;
+  protected _options: IOptions | undefined;
 
   private _dueSortMode = DueTasksSortMode;
 
   public dueTasks: Task[] = [];
   public futureDays: IDay[] = [];
+
+  protected moonPhaseAlt = moonPhaseAlt;
+  protected getMoonIcon = getMoonIcon;
 
   public constructor(
     public readonly saveService: SaveService,
@@ -286,26 +290,6 @@ export class TimelineComponent implements OnInit {
     }
   }
 
-  moonIcons: [
-    New: string,
-    WaxingCrescent: string,
-    QuarterMoon: string,
-    WaxingGibbous: string,
-    Full: string,
-    WaningGibbous: string,
-    LastQuarter: string,
-    WaningCrescent: string
-  ] = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
-
-  public getMoonIcon(dateStr: string): string {
-    let date = new Date(dateStr);
-    return this.moonPhase(
-      date.getFullYear(),
-      date.getMonth() + 1,
-      date.getDate()
-    );
-  }
-
   redirectToEditor(dayPreset: string): void {
     this.router.navigate(['/edit/new'], {
       queryParams: { redirectedFrom: 'home', dayPreset: dayPreset },
@@ -315,76 +299,4 @@ export class TimelineComponent implements OnInit {
   public undoAction(): void {
     this.saveService.undoHistoryAction();
   }
-
-  LUNAR_CYCLE = 29.5305882; // 29.53058770576
-  DAYS_PER_YEAR = 365.25;
-  DAYS_PER_MONTH = 30.6;
-
-  // Number of days since known new moon on `1900-01-01`.
-  DAYS_SINCE_NEW_MOON_1900_01_01 = 694039.09;
-
-  moonPhaseAlt(date: Date = new Date()): string {
-    // let year = date.getYear()
-    let year: number = date.getFullYear();
-
-    let month: number = date.getMonth() + 1;
-    const day: number = date.getDate();
-    return this.moonPhase(year, month, day);
-  }
-
-  // Ported from `http://www.voidware.com/moon_phase.htm`.
-  moonPhase(year: number, month: number, day: number): string {
-    if (month < 3) {
-      year--;
-      month += 12;
-    }
-
-    month += 1;
-
-    let totalDaysElapsed: number =
-      this.DAYS_PER_YEAR * year +
-      this.DAYS_PER_MONTH * month +
-      day -
-      this.DAYS_SINCE_NEW_MOON_1900_01_01;
-
-    totalDaysElapsed /= this.LUNAR_CYCLE; // Divide by the lunar cycle.
-
-    let phase: number = Math.trunc(totalDaysElapsed);
-
-    /*
-      Subtract integer part to leave fractional part of original
-      `totalDaysElapsed`.
-    */
-    totalDaysElapsed -= phase;
-
-    // Scale fraction from `0-8`.
-    phase = round(totalDaysElapsed * 8);
-    if (phase > this.moonIcons.length || phase < 0) {
-      return '';
-    }
-
-    if (phase >= 8) phase = 0; // `0` and `8` are the same so turn `8` into `0`.
-
-    //return correct string based on setting
-    if (this._options) {
-      if (this._options.showMoons == MoonMode.All) {
-        return this.moonIcons[phase];
-      } else if (this._options.showMoons == MoonMode.FullMoonOnly) {
-        if (phase == 4) {
-          return this.moonIcons[phase];
-        } else {
-          return '';
-        }
-      } else if (this._options.showMoons == MoonMode.None) {
-        return '';
-      }
-    }
-    return this.moonIcons[phase];
-  }
-}
-
-export interface IResult {
-  name: string;
-  phase: string;
-  icon: string;
 }
