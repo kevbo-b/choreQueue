@@ -123,10 +123,12 @@ export class Task {
 
   private _getDateDifference(fromDateStr: string, toDateStr: string): number {
     let fromDate = new Date(fromDateStr);
+    fromDate.setHours(0, 0, 0, 0);
     let toDate = new Date(toDateStr);
+    toDate.setHours(0, 0, 0, 0);
 
     var diff = Math.abs(fromDate.getTime() - toDate.getTime());
-    var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+    var diffDays = Math.round(diff / (1000 * 3600 * 24));
 
     return diffDays;
   }

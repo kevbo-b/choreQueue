@@ -257,10 +257,11 @@ export class TimelineComponent implements OnInit {
 
   public daysTillDue(date: string): number {
     let today = new Date();
+    today.setHours(0, 0, 0, 0);
     let dateOfDay = new Date(date);
 
     var diff = Math.abs(today.getTime() - dateOfDay.getTime());
-    var diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+    var diffDays = Math.round(diff / (1000 * 3600 * 24));
 
     return diffDays;
   }

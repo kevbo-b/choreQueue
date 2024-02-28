@@ -52,10 +52,11 @@ export class TaskPanelComponent {
 
   dueSince(task: Task): number {
     let today = new Date();
+    today.setHours(0, 0, 0, 0);
     let dueDate = new Date(task?.getDisplayDueDate());
 
     var diff = Math.abs(today.getTime() - dueDate.getTime());
-    var diffDays = Math.ceil(diff / (1000 * 3600 * 24)) - 1;
+    var diffDays = Math.round(diff / (1000 * 3600 * 24));
 
     return diffDays;
   }
