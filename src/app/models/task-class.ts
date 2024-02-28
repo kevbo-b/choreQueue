@@ -99,9 +99,9 @@ export class Task {
   }
 
   //Save the current day as freeze day (for reference. Used for calculations inside getDisplayDueDate())
-  //Only activates if it doesnt use strict-time
+  //Only activates if it doesnt use strict-time (AND if it isnt already activated)
   public activateFreeze(): void {
-    if (!this.usesStrictTime) {
+    if (!this.usesStrictTime && !this.freezeDate) {
       if (this.addToLastDueDate) {
         //... disregard?
       } else {
